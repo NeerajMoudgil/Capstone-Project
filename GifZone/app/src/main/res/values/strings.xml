@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Gif Zone</string>
+
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Fragment Titles -->
+    <string name="fragment_top_title">Top Gifs</string>
+    <string name="fragment_categories_title">Categories</string>
+    <string name="fragment_favorites_titile">Favorites</string>
+
+</resources>
