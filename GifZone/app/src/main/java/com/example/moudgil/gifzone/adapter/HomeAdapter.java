@@ -63,8 +63,6 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Home home = homeList.get(position);
         holder.title.setText(home.getTitle());
-
-
         // loading album cover using Glide library
         Glide.with(mContext).load(home.getDrawableId()).into(holder.thumbnail);
 

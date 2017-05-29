@@ -28,6 +28,8 @@ public class CategoriesFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private String categoriesArr[]=new String [9];
+
     private OnFragmentInteractionListener mListener;
 
     public CategoriesFragment() {
@@ -65,6 +67,7 @@ public class CategoriesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        getResources().getStringArray(R.array.categoriesArr);
         return inflater.inflate(R.layout.fragment_categories, container, false);
     }
 

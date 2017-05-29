@@ -10,5 +10,11 @@ public class Config {
     public static final String TRENDING="trending";
     public static final String API_KEY="api_key";
     public static final String API_KEY_VALUE="dc6zaTOxFJmzC";
+    public static final String FOLDER_NAME="GifZone";
+
+    //shared data over intent
+
+    public static final String IMG_URL="img";
+    public static final String GIF_ID="gifID";
 
 }

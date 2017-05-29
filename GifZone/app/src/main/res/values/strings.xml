@@ -8,4 +8,17 @@
     <string name="fragment_categories_title">Categories</string>
     <string name="fragment_favorites_titile">Favorites</string>
 
+    <string-array name="categoriesArr">
+    <item>#yes</item>
+    <item>#no</item>
+    <item>#awww</item>
+    <item>#cuddle</item>
+    <item>#love</item>
+    <item>#bye</item>
+    <item>#angry</item>
+    <item>#good morning</item>
+    <item>#good night</item>
+
+    </string-array>
+
 </resources>

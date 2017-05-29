@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         for(int i=0;i<3;i++ )
         {
-            Home home= new Home("FAvv",R.mipmap.ic_launcher_round);
+            Home home= new Home("FAvv",R.mipmap.ic_launcher);
             homeList.add(home);
         }
 
@@ -107,5 +107,10 @@ public class MainActivity extends AppCompatActivity {
     private int dpToPx(int dp) {
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

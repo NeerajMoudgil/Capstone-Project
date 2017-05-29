@@ -61,7 +61,7 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
 
     private List<GifImage> gifList;
 
-@BindView(R.id.gif_image_recycler)
+    @BindView(R.id.gif_image_recycler)
     RecyclerView gifRecycelerView;
 
     private GifImageAdapter gifImageAdapter;
@@ -139,6 +139,7 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
         HashMap<String,String> params= new HashMap<>();
         params.put(Config.API_KEY,Config.API_KEY_VALUE);
         String getUrl= fetchData.createGetURL(url,Config.TRENDING,params);
+        Log.d("frag",getUrl);
         fetchData.getCall(getUrl);
     }
 
@@ -180,9 +181,10 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
                     for(int iter=0;iter<len;iter++) {
                         JSONObject dataobj = dataArr.getJSONObject(iter);
                         JSONObject imgObj = dataobj.getJSONObject("images");
+                        String gifID = dataobj.getString("id");
                         JSONObject originalObj = imgObj.getJSONObject("fixed_width_downsampled");
                         String url = originalObj.getString("url");
-                        GifImage gifImage=new GifImage(url);
+                        GifImage gifImage=new GifImage(url,gifID);
                         gifList.add(gifImage);
                         Log.d("toppp", url);
                     }
@@ -207,7 +209,8 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
 
             Fragment detailFragment=  DetailFragment.newInstance("ok","ok");
             Bundle bundle= new Bundle();
-            bundle.putString("IMG",gifImage.getUrl());
+            bundle.putString(Config.IMG_URL,gifImage.getUrl());
+            bundle.putString(Config.GIF_ID,gifImage.getId());
 
             // Setup enter transition on second fragment
             detailFragment.setSharedElementEnterTransition(changeTransform);

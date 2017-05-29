@@ -7,9 +7,11 @@ package com.example.moudgil.gifzone.data;
 public class GifImage {
 
     private String url;
+    private String id;
 
-    public GifImage(String url) {
+    public GifImage(String url, String id) {
         this.url = url;
+        this.id = id;
     }
 
     public String getUrl() {
@@ -18,5 +20,13 @@ public class GifImage {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

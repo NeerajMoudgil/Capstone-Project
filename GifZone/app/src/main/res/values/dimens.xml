@@ -11,5 +11,6 @@
     <dimen name="home_cover_height">160dp</dimen>
     <dimen name="home_title_padding">10dp</dimen>
     <dimen name="home_title">15sp</dimen>
+    <dimen name="detail_img_margin">16dp</dimen>
 
 </resources>
