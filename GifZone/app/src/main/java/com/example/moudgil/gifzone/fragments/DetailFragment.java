@@ -360,7 +360,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener{
                 try {
                     startActivity(shareIntent);
                 } catch (android.content.ActivityNotFoundException ex) {
-                    Toast.makeText(getContext(),"Whatsapp not installed",Toast.LENGTH_SHORT);                }
+                    Toast.makeText(getContext(),"Whatsapp not installed",Toast.LENGTH_SHORT).show();                }
                 return file.getAbsolutePath();
             }
             catch(IOException io)

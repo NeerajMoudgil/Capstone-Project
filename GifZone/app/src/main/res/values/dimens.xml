@@ -13,4 +13,9 @@
     <dimen name="home_title">15sp</dimen>
     <dimen name="detail_img_margin">16dp</dimen>
 
+    <dimen name="widget_gif_default_width">250dp</dimen>
+    <dimen name="widget_gif_default_height">160dp</dimen>
+    <dimen name="widget_gif_min_resize_width">230dp</dimen>
+    <dimen name="widget_gif_min_resize_height">@dimen/widget_gif_default_height</dimen>
+
 </resources>
