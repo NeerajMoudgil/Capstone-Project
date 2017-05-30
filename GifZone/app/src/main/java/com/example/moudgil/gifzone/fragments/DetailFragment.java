@@ -34,6 +34,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.example.moudgil.gifzone.R;
 import com.example.moudgil.gifzone.app.Config;
+import com.example.moudgil.gifzone.data.GifContract;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -74,6 +75,9 @@ public class DetailFragment extends Fragment implements View.OnClickListener{
     ImageView detail_img;
     @BindView(R.id.whatsapp_share)
     ImageView whatsappImg;
+    @BindView(R.id.favorite)
+    ImageView favoriteImg;
+    public static boolean favoriteChanged=false;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -94,6 +98,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener{
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
+        favoriteChanged=false;
         return fragment;
     }
 
@@ -121,6 +126,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         whatsappImg.setOnClickListener(this);
+        favoriteImg.setOnClickListener(this);
         Bundle bundle= getArguments();
 
         if(bundle!=null)
@@ -179,8 +185,24 @@ public class DetailFragment extends Fragment implements View.OnClickListener{
             case R.id.whatsapp_share:
                 checkPermissions();
                 break;
+            case R.id.favorite:
+                insertIntoDB();
+                break;
 
         }
+    }
+
+    private void insertIntoDB() {
+        favoriteChanged=true;
+        String url=getArguments().getString(Config.IMG_URL);
+        String id=getArguments().getString(Config.GIF_ID);
+        ContentValues contentValues= new ContentValues();
+
+        contentValues.put(GifContract.GifEntry.COLUMN_GIFID, id);
+        contentValues.put(GifContract.GifEntry.COLUMN_GIF_URL, url);
+
+        Uri uri = getContext().getContentResolver().insert(GifContract.GifEntry.CONTENT_URI, contentValues);
+
     }
 
     /**

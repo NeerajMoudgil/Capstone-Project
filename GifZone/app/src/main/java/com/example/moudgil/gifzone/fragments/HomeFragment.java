@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.moudgil.gifzone.CategoryActivity;
+import com.example.moudgil.gifzone.FavoritesActivity;
 import com.example.moudgil.gifzone.R;
 import com.example.moudgil.gifzone.TopGifActivity;
 import com.example.moudgil.gifzone.adapter.HomeAdapter;
@@ -157,6 +158,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
                 startActivity(intent);
                 break;
             case "Favorites":
+                intent= new Intent(getActivity(), FavoritesActivity.class);
+                startActivity(intent);
                 break;
         }
 

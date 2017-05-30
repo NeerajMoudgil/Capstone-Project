@@ -31,7 +31,16 @@
         <activity
             android:name=".DetailActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".CategoryActivity"
+        <activity
+            android:name=".CategoryActivity"
+            android:theme="@style/AppTheme" />
+
+        <provider
+            android:name=".data.GifProvider"
+            android:authorities="com.example.moudgil.gifzone"
+            android:exported="false" />
+
+        <activity android:name=".FavoritesActivity"
             android:theme="@style/AppTheme"/>
     </application>
 

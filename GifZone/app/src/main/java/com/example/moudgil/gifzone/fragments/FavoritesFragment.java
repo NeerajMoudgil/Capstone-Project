@@ -1,14 +1,35 @@
 package com.example.moudgil.gifzone.fragments;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.moudgil.gifzone.R;
+import com.example.moudgil.gifzone.adapter.GifImageAdapter;
+import com.example.moudgil.gifzone.adapter.GifsCursorAdapter;
+import com.example.moudgil.gifzone.app.Config;
+import com.example.moudgil.gifzone.data.GifContract;
+import com.example.moudgil.gifzone.data.GifImage;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,17 +39,26 @@ import com.example.moudgil.gifzone.R;
  * Use the {@link FavoritesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FavoritesFragment extends Fragment {
+public class FavoritesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,GifsCursorAdapter.GifsCursorOnClickHandler {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int LOADER_ID = 102;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private LoaderManager loaderManager;
+
+    @BindView(R.id.favorites_recycler)
+    RecyclerView favoriteRecyceler;
+
+    private GifsCursorAdapter gifCursorAdapter;
+
+    private Unbinder unbinder;
 
     public FavoritesFragment() {
         // Required empty public constructor
@@ -65,7 +95,26 @@ public class FavoritesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorites, container, false);
+        View view=inflater.inflate(R.layout.fragment_favorites, container, false);
+        unbinder= ButterKnife.bind(this,view);
+        favoriteRecyceler.setHasFixedSize(true);
+        gifCursorAdapter= new GifsCursorAdapter(this);
+        favoriteRecyceler.setLayoutManager(new GridLayoutManager(getContext(),2));
+        favoriteRecyceler.setAdapter(gifCursorAdapter);
+
+        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -90,6 +139,114 @@ public class FavoritesFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    /**
+     * getting data from local DB for favourite gifs using contentProvider
+     */
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<Cursor>(getContext()) {
+            Cursor mGifData = null;
+
+            @Override
+            protected void onStartLoading() {
+
+                if (mGifData == null || DetailFragment.favoriteChanged) {
+                   // mLoadingIndicator.setVisibility(View.VISIBLE);
+                    Log.i("forceO", "forceLOad");
+                    forceLoad();
+                    ;
+                } else {
+                    deliverResult(mGifData);
+                }
+            }
+
+            @Override
+            protected void onForceLoad() {
+                super.onForceLoad();
+            }
+
+            @Override
+            public void deliverResult(Cursor data) {
+                mGifData = data;
+                super.deliverResult(data);
+            }
+
+            @Override
+            public Cursor loadInBackground() {
+
+                try {
+                    return getContext().getContentResolver().query(GifContract.GifEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            null);
+
+                } catch (Exception e) {
+
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        };
+    }
+
+    /**
+     * @param loader
+     * @param data   response data comes after querying the movies DB
+     */
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        int crsrCount = data.getCount();
+        if (crsrCount > 0) {
+            showGifsData();
+        } else {
+           // String msg = getString(R.string.noFavorites);
+           // showErrorView(msg);
+        }
+      //  mLoadingIndicator.setVisibility(View.INVISIBLE);
+      //  Movie.oldCursor = data;
+        gifCursorAdapter.swapCursor(data);
+
+    }
+
+    private void showGifsData() {
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
+    @Override
+    public void onClickCursor(GifsCursorAdapter.GifsAdapterViewHolder viewHolder,GifImage gifImage) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Transition changeTransform = TransitionInflater.from(getContext()).
+                    inflateTransition(R.transition.change_image_transform);
+            Transition explodeTransform = TransitionInflater.from(getContext()).
+                    inflateTransition(android.R.transition.explode);
+            this.setSharedElementReturnTransition(changeTransform);
+            this.setExitTransition(explodeTransform);
+
+            Fragment detailFragment=  DetailFragment.newInstance("ok","ok");
+            Bundle bundle= new Bundle();
+            bundle.putString(Config.IMG_URL,gifImage.getUrl());
+            bundle.putString(Config.GIF_ID,gifImage.getId());
+
+            // Setup enter transition on second fragment
+            detailFragment.setSharedElementEnterTransition(changeTransform);
+            detailFragment.setEnterTransition(explodeTransform);
+            detailFragment.setArguments(bundle);
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .addSharedElement(viewHolder.gifImage, "gif_transition")
+                    .replace(R.id.container, detailFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+
     }
 
     /**
