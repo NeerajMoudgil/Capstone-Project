@@ -25,6 +25,13 @@ public class HomeAdapter  extends RecyclerView.Adapter<HomeAdapter.MyViewHolder>
         private Context mContext;
         private List<Home> homeList;
 
+    private HomeAdapter.homeClickListener homeClickListener;
+    public interface homeClickListener
+    {
+        void homeClick(Home home);
+
+    }
+
 public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     public TextView title, count;
     public ImageView thumbnail, overflow;
@@ -40,19 +47,21 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
     @Override
     public void onClick(View v) {
         Log.d("adpte","onclick");
-        Intent intent= new Intent(mContext, TopGifActivity.class);
-        mContext.startActivity(intent);
+
+        Home home= homeList.get(getAdapterPosition());
+        homeClickListener.homeClick(home);
     }
 }
 
 
-    public HomeAdapter(Context mContext, List<Home> homeList) {
-        this.mContext = mContext;
+    public HomeAdapter(HomeAdapter.homeClickListener homeClickListener, List<Home> homeList) {
+        this.homeClickListener = homeClickListener;
         this.homeList = homeList;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        mContext=parent.getContext();
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.home_card, parent, false);
 

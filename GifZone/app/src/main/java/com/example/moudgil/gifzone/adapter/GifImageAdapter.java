@@ -6,6 +6,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,11 +40,14 @@ private List<GifImage> gifImageList;
 
 public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
+    @BindView(R.id.hashTag_text)
+    TextView hashTagTextView;
     public ImageView gifImage;
+
     public MyViewHolder(View view) {
         super(view);
-        //ButterKnife.bind(this,view);
-        gifImage= (ImageView) view.findViewById(R.id.gif_image);
+        ButterKnife.bind(this,view);
+        gifImage=(ImageView)view.findViewById(R.id.gif_image);
         view.setOnClickListener(this);
 
     }
@@ -65,7 +69,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
     public GifImageAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext=parent.getContext();
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.gif_image_list_item, parent, false);
+                .inflate(R.layout.category_card, parent, false);
 
         return new GifImageAdapter.MyViewHolder(itemView);
     }
@@ -76,6 +80,13 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
 
         ViewCompat.setTransitionName(holder.gifImage, String.valueOf(position) + "_image");
 
+        String tag=gifImage.getHashTAg();
+        if(tag!=null && !TextUtils.isEmpty(tag))
+        {
+            holder.hashTagTextView.setVisibility(View.VISIBLE);
+            String tagText="#"+tag;
+            holder.hashTagTextView.setText(tagText);
+        }
         // loading album cover using Glide library
         Glide.with(mContext).load(Uri.parse(gifImage.getUrl())).asGif().into(holder.gifImage);
 

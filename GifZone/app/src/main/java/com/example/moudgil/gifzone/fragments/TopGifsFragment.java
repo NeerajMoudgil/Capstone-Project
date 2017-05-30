@@ -137,10 +137,22 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
         FetchData fetchData= new FetchData(this);
         String url= Config.BASE_URL;
         HashMap<String,String> params= new HashMap<>();
-        params.put(Config.API_KEY,Config.API_KEY_VALUE);
-        String getUrl= fetchData.createGetURL(url,Config.TRENDING,params);
-        Log.d("frag",getUrl);
-        fetchData.getCall(getUrl);
+        Bundle bundle=getArguments();
+        if(bundle!=null) {
+
+            String urlType=bundle.getString(Config.URL_TYPE);
+            String queryParam=bundle.getString(Config.CATEGORY_TYPE,null);
+            if(queryParam!=null)
+            {
+                params.put(Config.QUERY_PARAM,queryParam);
+
+            }
+
+            params.put(Config.API_KEY, Config.API_KEY_VALUE);
+            String getUrl = fetchData.createGetURL(url, urlType, params);
+            Log.d("frag", getUrl);
+            fetchData.getCall(getUrl);
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -184,7 +196,7 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
                         String gifID = dataobj.getString("id");
                         JSONObject originalObj = imgObj.getJSONObject("fixed_width_downsampled");
                         String url = originalObj.getString("url");
-                        GifImage gifImage=new GifImage(url,gifID);
+                        GifImage gifImage=new GifImage(url,gifID,null);
                         gifList.add(gifImage);
                         Log.d("toppp", url);
                     }

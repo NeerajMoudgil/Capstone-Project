@@ -1,6 +1,7 @@
 package com.example.moudgil.gifzone.fragments;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -270,6 +272,11 @@ public class DetailFragment extends Fragment implements View.OnClickListener{
     {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
         protected String doInBackground(String... params) {
             String urlz = params[0];
             String gifId= params[1];
@@ -308,6 +315,30 @@ public class DetailFragment extends Fragment implements View.OnClickListener{
                 fos.close();
                 httpConn.disconnect();
                 Log.d("frag",file.getAbsolutePath());
+                //MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), file.getAbsolutePath(), gifId+".gif" , "image from Giphy");
+                ContentValues values = new ContentValues();
+
+                values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+                values.put(MediaStore.Images.Media.MIME_TYPE, "image/gif");
+                values.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath());
+
+                getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+                Uri imageUri = Uri.parse(file.getAbsolutePath());
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                //Target whatsapp:
+                shareIntent.setPackage("com.facebook.katana");
+                //Add text and then Image URI
+                //shareIntent.putExtra(Intent.EXTRA_TEXT, picture_text);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                shareIntent.setType("image/gif");
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                try {
+                    startActivity(shareIntent);
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(getContext(),"Whatsapp not installed",Toast.LENGTH_SHORT);                }
                 return file.getAbsolutePath();
             }
             catch(IOException io)

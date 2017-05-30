@@ -1,5 +1,6 @@
 package com.example.moudgil.gifzone;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 
 import com.example.moudgil.gifzone.adapter.HomeAdapter;
+import com.example.moudgil.gifzone.app.Config;
 import com.example.moudgil.gifzone.data.Home;
 import com.example.moudgil.gifzone.ui.GridSpacingItemDecoration;
 
@@ -20,9 +22,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private HomeAdapter adapter;
-    private List<Home> homeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,27 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         initCollapsingToolbar();
-
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
-        homeList = new ArrayList<>();
-        adapter = new HomeAdapter(this, homeList);
-
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter);
-
-        prepareHome();
-
-        try {
-           // Glide.with(this).load(R.drawable.cover).into((ImageView) findViewById(R.id.backdrop));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -85,32 +64,4 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Adding few albums for testing
-     */
-    private void prepareHome() {
-
-        for(int i=0;i<3;i++ )
-        {
-            Home home= new Home("FAvv",R.mipmap.ic_launcher);
-            homeList.add(home);
-        }
-
-        adapter.notifyDataSetChanged();
-    }
-
-
-
-    /**
-     * Converting dp to pixel
-     */
-    private int dpToPx(int dp) {
-        Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 }

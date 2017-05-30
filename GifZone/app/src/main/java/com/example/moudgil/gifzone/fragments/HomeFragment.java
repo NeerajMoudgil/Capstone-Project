@@ -2,12 +2,15 @@ package com.example.moudgil.gifzone.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +18,10 @@ import android.view.ViewGroup;
 import com.example.moudgil.gifzone.CategoryActivity;
 import com.example.moudgil.gifzone.R;
 import com.example.moudgil.gifzone.TopGifActivity;
-import com.example.moudgil.gifzone.adapter.GifImageAdapter;
+import com.example.moudgil.gifzone.adapter.HomeAdapter;
 import com.example.moudgil.gifzone.app.Config;
-import com.example.moudgil.gifzone.data.GifImage;
+import com.example.moudgil.gifzone.data.Home;
+import com.example.moudgil.gifzone.ui.GridSpacingItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +33,12 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CategoriesFragment.OnFragmentInteractionListener} interface
+ * {@link HomeFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CategoriesFragment#newInstance} factory method to
+ * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CategoriesFragment extends Fragment implements GifImageAdapter.ImageClickedListener {
+public class HomeFragment extends Fragment implements HomeAdapter.homeClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -44,18 +48,15 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
     private String mParam1;
     private String mParam2;
 
+    private OnFragmentInteractionListener mListener;
+
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
     private Unbinder unbinder;
+    private HomeAdapter adapter;
+    private List<Home> homeList;
 
-    @BindView(R.id.categories_recycler)
-    RecyclerView categoriesRecycler;
-
-    private TopGifsFragment.OnFragmentInteractionListener mListener;
-
-    private List<GifImage> gifList;
-
-    private GifImageAdapter gifImageAdapter;
-
-    public CategoriesFragment() {
+    public HomeFragment() {
         // Required empty public constructor
     }
 
@@ -65,11 +66,11 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment CategoriesFragment.
+     * @return A new instance of fragment HomeFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CategoriesFragment newInstance(String param1, String param2) {
-        CategoriesFragment fragment = new CategoriesFragment();
+    public static HomeFragment newInstance(String param1, String param2) {
+        HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -90,29 +91,24 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_categories, container, false);
-        unbinder=ButterKnife.bind(this,view);
-        gifList=new ArrayList<>();
-        gifImageAdapter= new GifImageAdapter(this);
-        categoriesRecycler.setLayoutManager(new GridLayoutManager(getContext(),2));
-        categoriesRecycler.setAdapter(gifImageAdapter);
+        View v=inflater.inflate(R.layout.fragment_home, container, false);
+        unbinder= ButterKnife.bind(this,v);
 
-        return view;
+        homeList = new ArrayList<>();
+        adapter = new HomeAdapter(this, homeList);
+
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+        return v;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String arr[]=  getResources().getStringArray(R.array.categoriesArr);
-        int len=arr.length;
-        for(int iter=0;iter<len;iter++)
-        {
-            GifImage gifImage=new GifImage("https://media1.giphy.com/media/3o6gDTrDKD4cTqOlTG/200w_d.gif","0",arr[iter]);
-            gifList.add(gifImage);
-
-        }
-        gifImageAdapter.setGifImageList(gifList);
-
+        prepareHome();
     }
 
     @Override
@@ -128,11 +124,9 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
         }
     }
 
-
-
     @Override
     public void onAttach(Context context) {
-        super.onAttach(context);
+       super.onAttach(context);
 //        if (context instanceof OnFragmentInteractionListener) {
 //            mListener = (OnFragmentInteractionListener) context;
 //        } else {
@@ -148,12 +142,23 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
     }
 
     @Override
-    public void onImageClicekd(GifImageAdapter.MyViewHolder viewHolder, GifImage gifImage) {
-
-        Intent intent= new Intent(getActivity(), TopGifActivity.class);
-        intent.putExtra(Config.NAV_TYPE,Config.NAV_CATEGORIES);
-        intent.putExtra(Config.CATEGORY_TYPE,gifImage.getHashTAg());
-        startActivity(intent);
+    public void homeClick(Home home) {
+        String navName=home.getTitle();
+        Intent intent;
+        switch (navName)
+        {
+            case "Top":
+                intent= new Intent(getActivity(), TopGifActivity.class);
+                intent.putExtra(Config.NAV_TYPE,Config.NAV_TRENDING);
+                startActivity(intent);
+                break;
+            case "Categories":
+                intent= new Intent(getActivity(), CategoryActivity.class);
+                startActivity(intent);
+                break;
+            case "Favorites":
+                break;
+        }
 
     }
 
@@ -171,4 +176,29 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+    /**
+     * Converting dp to pixel
+     */
+    private int dpToPx(int dp) {
+        Resources r = getResources();
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
+    /**
+     * Adding few albums for testing
+     */
+    private void prepareHome() {
+
+        String homeArr[]= getResources().getStringArray(R.array.homeArr);
+        int len= homeArr.length;
+
+        for(int iter=0;iter<len;iter++)
+        {
+            Home home= new Home(homeArr[iter],R.mipmap.ic_launcher);
+            homeList.add(home);
+
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
 }
