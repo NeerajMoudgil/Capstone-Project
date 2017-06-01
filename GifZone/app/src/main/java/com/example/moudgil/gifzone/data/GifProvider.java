@@ -7,10 +7,13 @@ import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.example.moudgil.gifzone.app.Config;
 
 /**
  * Created by apple on 30/05/17.
@@ -134,8 +137,7 @@ public class GifProvider extends ContentProvider {
 
 
         getContext().getContentResolver().notifyChange(uri, null);
-        Intent dataUpdatedIntent = new Intent("com.example.moudgil.gifzone.ACTION_DATA_UPDATED");
-        getContext().sendBroadcast(dataUpdatedIntent);
+
 
 
         return returnUri;
@@ -168,7 +170,8 @@ public class GifProvider extends ContentProvider {
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
                 Log.i("rowsInserted",String.valueOf(rowsInserted));
-
+                Intent dataUpdatedIntent = new Intent(Config.WIDGET_UPDATE_ACTION);
+                getContext().sendBroadcast(dataUpdatedIntent);
                 return rowsInserted;
 
             default:
@@ -191,7 +194,7 @@ public class GifProvider extends ContentProvider {
                 break;
 
             case TRENDINGGIFS:
-                id = db.delete(GifContract.GifEntry.TABLE_NAME, selection, selectionArgs);
+                id = db.delete(GifContract.GifEntry.TRENDING_TABLE_NAME, selection, selectionArgs);
                 Log.i("DELETED",String.valueOf(id));
                 break;
             default:

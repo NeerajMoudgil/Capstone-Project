@@ -16,6 +16,7 @@ import android.widget.RemoteViews;
 import com.example.moudgil.gifzone.MainActivity;
 import com.example.moudgil.gifzone.R;
 import com.example.moudgil.gifzone.TopGifActivity;
+import com.example.moudgil.gifzone.app.Config;
 
 /**
  * Created by apple on 30/05/17.
@@ -39,6 +40,8 @@ public class GifWidgetProvider extends AppWidgetProvider {
                 setRemoteAdapter(context, views);
 
             Intent clickIntentTemplate = new Intent(context, TopGifActivity.class);
+            clickIntentTemplate.putExtra(Config.NAV_TYPE,Config.NAV_TRENDING);
+
             PendingIntent clickPendingIntentTemplate = TaskStackBuilder.create(context)
                     .addNextIntentWithParentStack(clickIntentTemplate)
                     .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -53,7 +56,7 @@ public class GifWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(@NonNull Context context, @NonNull Intent intent) {
         super.onReceive(context, intent);
-        if ("com.example.moudgil.gifzone.ACTION_DATA_UPDATED".equals(intent.getAction())) {
+        if (Config.WIDGET_UPDATE_ACTION.equals(intent.getAction())) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                     new ComponentName(context, getClass()));

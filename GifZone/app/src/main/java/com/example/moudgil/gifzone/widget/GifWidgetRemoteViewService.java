@@ -109,6 +109,7 @@ public class GifWidgetRemoteViewService extends RemoteViewsService{
 
                 final Intent fillInIntent = new Intent();
              //   fillInIntent.putExtra("symbol",data.getString(Contract.Quote.POSITION_SYMBOL));
+                fillInIntent.putExtra(Config.NAV_TYPE,Config.NAV_TRENDING);
                 views.setOnClickFillInIntent(R.id.widget_list_item, fillInIntent);
                 return views;
             }

@@ -2,6 +2,7 @@ package com.example.moudgil.gifzone.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -94,7 +95,13 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
         unbinder=ButterKnife.bind(this,view);
         gifList=new ArrayList<>();
         gifImageAdapter= new GifImageAdapter(this);
-        categoriesRecycler.setLayoutManager(new GridLayoutManager(getContext(),2));
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            categoriesRecycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        }else
+        {
+            categoriesRecycler.setLayoutManager(new GridLayoutManager(getContext(), 3));
+
+        }
         categoriesRecycler.setAdapter(gifImageAdapter);
 
         return view;

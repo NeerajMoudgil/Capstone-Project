@@ -16,17 +16,21 @@ import com.example.moudgil.gifzone.adapter.HomeAdapter;
 import com.example.moudgil.gifzone.app.Config;
 import com.example.moudgil.gifzone.data.Home;
 import com.example.moudgil.gifzone.ui.GridSpacingItemDecoration;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private FirebaseAnalytics firebaseAnalytics;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         initCollapsingToolbar();

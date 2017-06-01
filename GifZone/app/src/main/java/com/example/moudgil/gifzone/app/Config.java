@@ -25,4 +25,10 @@ public class Config {
     public static final String NAV_CATEGORIES="nav_categories";
     public static final String CATEGORY_TYPE="category";
 
+    //widget
+    public static final String WIDGET_UPDATE_ACTION= "com.example.moudgil.gifzone.ACTION_DATA_UPDATED";
+
+
+
+
 }

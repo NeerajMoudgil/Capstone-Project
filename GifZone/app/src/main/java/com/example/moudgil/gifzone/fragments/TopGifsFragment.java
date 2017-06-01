@@ -3,6 +3,7 @@ package com.example.moudgil.gifzone.fragments;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,7 +28,6 @@ import com.example.moudgil.gifzone.app.Config;
 import com.example.moudgil.gifzone.data.GifContract;
 import com.example.moudgil.gifzone.data.GifImage;
 import com.example.moudgil.gifzone.utils.FetchData;
-import com.pkmmte.view.CircularImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -120,8 +120,14 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
 
         gifList= new ArrayList<>();
         gifImageAdapter=new GifImageAdapter(this);
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        }
+        else{
+            gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        }
 
-        gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(),2));
+       // gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(),2));
         gifRecycelerView.setAdapter(gifImageAdapter);
        // dummy_test=(ImageView) view.findViewById(R.id.dummy_test);
         return view;
