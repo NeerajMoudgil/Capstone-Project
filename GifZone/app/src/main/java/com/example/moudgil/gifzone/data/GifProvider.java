@@ -3,6 +3,7 @@ package com.example.moudgil.gifzone.data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,6 +20,7 @@ public class GifProvider extends ContentProvider {
 
     final static int GIFSALL = 100;
     final static int GIFBYID = 101;
+    final static int TRENDINGGIFS = 200;
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private GifDBHelper mGifDBHelper;
 
@@ -26,6 +28,7 @@ public class GifProvider extends ContentProvider {
         UriMatcher urimatcher = new UriMatcher(UriMatcher.NO_MATCH);
         urimatcher.addURI(GifContract.CONTENT_AUTHORITY, GifContract.PATH_NAME, GIFSALL);
         urimatcher.addURI(GifContract.CONTENT_AUTHORITY, GifContract.PATH_NAME + "/#", GIFBYID);
+        urimatcher.addURI(GifContract.CONTENT_AUTHORITY, GifContract.PATH_NAME_TRENDING,TRENDINGGIFS);
         return urimatcher;
 
     }
@@ -76,6 +79,20 @@ public class GifProvider extends ContentProvider {
                 break;
 
             }
+
+            case TRENDINGGIFS:{
+                cursor = mGifDBHelper.getReadableDatabase().query(
+                        GifContract.GifEntry.TRENDING_TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -117,9 +134,46 @@ public class GifProvider extends ContentProvider {
 
 
         getContext().getContentResolver().notifyChange(uri, null);
+        Intent dataUpdatedIntent = new Intent("com.example.moudgil.gifzone.ACTION_DATA_UPDATED");
+        getContext().sendBroadcast(dataUpdatedIntent);
 
 
         return returnUri;
+    }
+
+    @Override
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
+        final SQLiteDatabase db = mGifDBHelper.getWritableDatabase();
+
+        switch (sUriMatcher.match(uri)) {
+
+            case TRENDINGGIFS:
+                db.beginTransaction();
+                int rowsInserted = 0;
+                try {
+                    for (ContentValues value : values) {
+
+
+                        long _id = db.insert(GifContract.GifEntry.TRENDING_TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            rowsInserted++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+
+                }
+                if (rowsInserted > 0) {
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+                Log.i("rowsInserted",String.valueOf(rowsInserted));
+
+                return rowsInserted;
+
+            default:
+                return super.bulkInsert(uri, values);
+        }
     }
 
     @Override
@@ -134,6 +188,11 @@ public class GifProvider extends ContentProvider {
 
                 Log.i("DELETED",String.valueOf(id));
 
+                break;
+
+            case TRENDINGGIFS:
+                id = db.delete(GifContract.GifEntry.TABLE_NAME, selection, selectionArgs);
+                Log.i("DELETED",String.valueOf(id));
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

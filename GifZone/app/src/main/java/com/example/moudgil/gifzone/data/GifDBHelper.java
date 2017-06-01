@@ -29,7 +29,19 @@ public class GifDBHelper extends SQLiteOpenHelper {
 
                 GifContract.GifEntry.COLUMN_GIF_URL + " TEXT NOT NULL)";
 
+        final String CREATE_STATEMENT_TRTENDING = "CREATE TABLE " + GifContract.GifEntry.TRENDING_TABLE_NAME + " (" +
+
+
+                GifContract.GifEntry._ID + " INTEGER, " +
+
+                GifContract.GifEntry.COLUMN_GIFID + " TEXT NOT NULL, " +
+
+                GifContract.GifEntry.COLUMN_GIF_URL + " TEXT NOT NULL)";
+
         sqLiteDatabase.execSQL(CREATE_STATEMENT);
+        sqLiteDatabase.execSQL(CREATE_STATEMENT_TRTENDING);
+
+
 
 
     }
@@ -37,6 +49,7 @@ public class GifDBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + GifContract.GifEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + GifContract.GifEntry.TRENDING_TABLE_NAME);
         onCreate(sqLiteDatabase);
 
     }

@@ -1,5 +1,6 @@
 package com.example.moudgil.gifzone.fragments;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import com.example.moudgil.gifzone.DetailActivity;
 import com.example.moudgil.gifzone.R;
 import com.example.moudgil.gifzone.adapter.GifImageAdapter;
 import com.example.moudgil.gifzone.app.Config;
+import com.example.moudgil.gifzone.data.GifContract;
 import com.example.moudgil.gifzone.data.GifImage;
 import com.example.moudgil.gifzone.utils.FetchData;
 import com.pkmmte.view.CircularImageView;
@@ -190,16 +192,24 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
                 int len= dataArr.length();
                 if(len>0)
                 {
+                    ContentValues content []= new ContentValues[len];
                     for(int iter=0;iter<len;iter++) {
                         JSONObject dataobj = dataArr.getJSONObject(iter);
                         JSONObject imgObj = dataobj.getJSONObject("images");
                         String gifID = dataobj.getString("id");
                         JSONObject originalObj = imgObj.getJSONObject("fixed_width_downsampled");
                         String url = originalObj.getString("url");
+                        ContentValues contentValues= new ContentValues();
+                        contentValues.put(GifContract.GifEntry.COLUMN_GIFID,gifID);
+                        contentValues.put(GifContract.GifEntry.COLUMN_GIF_URL,url);
+                        content[iter]=contentValues;
                         GifImage gifImage=new GifImage(url,gifID,null);
                         gifList.add(gifImage);
                         Log.d("toppp", url);
                     }
+
+                    getActivity().getContentResolver().delete(GifContract.GifEntry.CONTENT_URI_TRENDING,null,null);
+                    getActivity().getContentResolver().bulkInsert(GifContract.GifEntry.CONTENT_URI_TRENDING,content);
                     gifImageAdapter.setGifImageList(gifList);
                 }
             } catch (JSONException e) {

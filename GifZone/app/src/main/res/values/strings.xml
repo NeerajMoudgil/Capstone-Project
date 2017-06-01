@@ -30,4 +30,6 @@
 
     </string-array>
 
+    <string name="widget_nodata">No data to show</string>
+
 </resources>

@@ -17,5 +17,6 @@
     <dimen name="widget_gif_default_height">160dp</dimen>
     <dimen name="widget_gif_min_resize_width">230dp</dimen>
     <dimen name="widget_gif_min_resize_height">@dimen/widget_gif_default_height</dimen>
+    <dimen name="widget_grid_horizontal">80dp</dimen>
 
 </resources>

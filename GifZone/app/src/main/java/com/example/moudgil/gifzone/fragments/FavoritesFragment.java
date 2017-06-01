@@ -194,7 +194,7 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
 
     /**
      * @param loader
-     * @param data   response data comes after querying the movies DB
+     * @param data   response data comes after querying the gifs DB
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
