@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:baselineAligned="false"
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
@@ -11,6 +12,14 @@
     <!--
     This layout is a two-pane layout for the Items master/detail flow.
     -->
+
+
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/toolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="100dp"-->
+        <!--app:layout_collapseMode="pin"-->
+        <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
 
     <fragment
         android:id="@+id/fragment_forecast"

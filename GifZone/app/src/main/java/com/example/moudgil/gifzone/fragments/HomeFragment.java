@@ -23,6 +23,8 @@ import com.example.moudgil.gifzone.adapter.HomeAdapter;
 import com.example.moudgil.gifzone.app.Config;
 import com.example.moudgil.gifzone.data.Home;
 import com.example.moudgil.gifzone.ui.GridSpacingItemDecoration;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
@@ -55,7 +57,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
     private OnFragmentInteractionListener mListener;
 
     @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
+    RecyclerView recyclerView; @BindView(R.id.adView)
+    AdView mAdView;
     private Unbinder unbinder;
     private HomeAdapter adapter;
     private List<Home> homeList;
@@ -89,6 +92,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
@@ -106,7 +110,19 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+        showAdd();
         return v;
+    }
+
+    private void showAdd() {
+
+        // Create an ad request. Check logcat output for the hashed device ID to
+        // get test ads on a physical device. e.g.
+        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("ABCDEF012345")
+                .build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override

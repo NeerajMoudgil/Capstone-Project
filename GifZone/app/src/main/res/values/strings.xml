@@ -31,5 +31,11 @@
     </string-array>
 
     <string name="widget_nodata">No data to show</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+
+    <!--errors -->
+    <string name="network_error">Please check your network connection!</string>
+    <string name="other_error">Something went wrong. Please try again after sometime!</string>
+    <string name="no_fav_error">No favorites to show!</string>
 
 </resources>

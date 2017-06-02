@@ -11,4 +11,19 @@
         android:layout_height="match_parent"
         android:transitionName="profile"/>
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        />
+    <TextView
+        android:id="@+id/emptyView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/no_fav_error"
+        android:textColor="@color/colorAccent"/>
+
+
 </FrameLayout>

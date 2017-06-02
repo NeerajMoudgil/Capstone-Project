@@ -33,7 +33,13 @@ public class MainActivity extends AppCompatActivity {
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        initCollapsingToolbar();
+        if(!getResources().getBoolean(R.bool.two_pane)) {
+
+            initCollapsingToolbar();
+        }else
+        {
+            toolbar.setTitle(getString(R.string.app_name));
+        }
     }
 
     /**

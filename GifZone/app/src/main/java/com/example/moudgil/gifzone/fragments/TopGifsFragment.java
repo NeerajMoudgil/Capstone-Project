@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.moudgil.gifzone.DetailActivity;
@@ -28,6 +30,7 @@ import com.example.moudgil.gifzone.app.Config;
 import com.example.moudgil.gifzone.data.GifContract;
 import com.example.moudgil.gifzone.data.GifImage;
 import com.example.moudgil.gifzone.utils.FetchData;
+import com.example.moudgil.gifzone.utils.NetworkCalls;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,8 +68,13 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
 
     @BindView(R.id.gif_image_recycler)
     RecyclerView gifRecycelerView;
+    @BindView(R.id.progress_bar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.emptyView)
+    TextView emptyView;
 
     private GifImageAdapter gifImageAdapter;
+    private boolean isTrending=false;
 
     public TopGifsFragment() {
         // Required empty public constructor
@@ -150,6 +158,13 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
 
             String urlType=bundle.getString(Config.URL_TYPE);
             String queryParam=bundle.getString(Config.CATEGORY_TYPE,null);
+            if(queryParam.equals(Config.TRENDING))
+            {
+                isTrending=true;
+            }else
+            {
+                isTrending=false;
+            }
             if(queryParam!=null)
             {
                 params.put(Config.QUERY_PARAM,queryParam);
@@ -157,9 +172,18 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
             }
 
             params.put(Config.API_KEY, Config.API_KEY_VALUE);
+
             String getUrl = fetchData.createGetURL(url, urlType, params);
             Log.d("frag", getUrl);
-            fetchData.getCall(getUrl);
+            if(NetworkCalls.getInstance().isConnected()) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                fetchData.getCall(getUrl);
+            }else
+            {
+
+                showErrorView(getString(R.string.network_error));
+
+            }
         }
     }
 
@@ -213,16 +237,31 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
                         gifList.add(gifImage);
                         Log.d("toppp", url);
                     }
-
-                    getActivity().getContentResolver().delete(GifContract.GifEntry.CONTENT_URI_TRENDING,null,null);
-                    getActivity().getContentResolver().bulkInsert(GifContract.GifEntry.CONTENT_URI_TRENDING,content);
+                    if(isTrending) {
+                        getActivity().getContentResolver().delete(GifContract.GifEntry.CONTENT_URI_TRENDING, null, null);
+                        getActivity().getContentResolver().bulkInsert(GifContract.GifEntry.CONTENT_URI_TRENDING, content);
+                    }
                     gifImageAdapter.setGifImageList(gifList);
+                    if(isAdded())
+                    {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                showErrorView(getString(R.string.other_error));
             }
         }
 
+    }
+
+    private void showErrorView(String err) {
+        if (isAdded()) {
+            mProgressBar.setVisibility(View.GONE);
+            emptyView.setText(err);
+            emptyView.setVisibility(View.VISIBLE);
+
+        }
     }
 
     @Override

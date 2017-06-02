@@ -18,6 +18,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.moudgil.gifzone.R;
 import com.example.moudgil.gifzone.adapter.GifImageAdapter;
@@ -55,6 +57,10 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
 
     @BindView(R.id.favorites_recycler)
     RecyclerView favoriteRecyceler;
+ @BindView(R.id.progress_bar)
+ ProgressBar mProgressBar;
+@BindView(R.id.emptyView)
+TextView emptyView;
 
     private GifsCursorAdapter gifCursorAdapter;
 
@@ -153,7 +159,7 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
             protected void onStartLoading() {
 
                 if (mGifData == null || DetailFragment.favoriteChanged) {
-                   // mLoadingIndicator.setVisibility(View.VISIBLE);
+                    mProgressBar.setVisibility(View.VISIBLE);
                     Log.i("forceO", "forceLOad");
                     forceLoad();
                     ;
@@ -201,18 +207,24 @@ public class FavoritesFragment extends Fragment implements LoaderManager.LoaderC
 
         int crsrCount = data.getCount();
         if (crsrCount > 0) {
-            showGifsData();
+            showGifsData(data);
         } else {
-           // String msg = getString(R.string.noFavorites);
-           // showErrorView(msg);
+            String msg = getString(R.string.no_fav_error);
+            showErrorView(msg);
         }
-      //  mLoadingIndicator.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.INVISIBLE);
       //  Movie.oldCursor = data;
-        gifCursorAdapter.swapCursor(data);
+
 
     }
 
-    private void showGifsData() {
+    private void showErrorView(String msg) {
+        emptyView.setVisibility(View.VISIBLE);
+        emptyView.setText(msg);
+    }
+
+    private void showGifsData(Cursor data) {
+        gifCursorAdapter.swapCursor(data);
     }
 
     @Override
