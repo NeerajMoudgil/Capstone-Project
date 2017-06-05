@@ -18,8 +18,10 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <!--added config change to retain state-->
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:launchMode="singleTop"
             android:theme="@style/MyMaterialTheme">
             <intent-filter>
@@ -30,23 +32,29 @@
         </activity>
         <activity
             android:name=".TopGifActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".DetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".CategoryActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme" />
 
+        <!-- content provider for DB-->
         <provider
             android:name=".data.GifProvider"
             android:authorities="com.example.moudgil.gifzone"
             android:exported="false" />
 
-        <activity android:name=".FavoritesActivity"
-            android:theme="@style/AppTheme"
-            android:parentActivityName=".MainActivity"/>
+        <activity
+            android:name=".FavoritesActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" />
 
         <!--Include the AdActivity configChanges and theme. -->
         <activity
@@ -55,9 +63,8 @@
             android:theme="@android:style/Theme.Translucent" />
 
         <receiver android:name=".widget.GifWidgetProvider">
-            <intent-filter >
-                <action
-                    android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.example.moudgil.gifzone.ACTION_DATA_UPDATED" />
             </intent-filter>
 

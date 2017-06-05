@@ -12,10 +12,10 @@ public class GifContract {
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    public static final String PATH_NAME="gifs";
-    public static final String PATH_NAME_TRENDING="trendingGifs";
-    public static final class GifEntry implements BaseColumns
-    {
+    public static final String PATH_NAME = "gifs";
+    public static final String PATH_NAME_TRENDING = "trendingGifs";
+
+    public static final class GifEntry implements BaseColumns {
         public static final String TABLE_NAME = "gifs";
         public static final String TRENDING_TABLE_NAME = "trendingGifs";
 
@@ -28,9 +28,9 @@ public class GifContract {
                 .build();
 
 
-        public static final String COLUMN_GIFID="gifid";
+        public static final String COLUMN_GIFID = "gifid";
 
-        public static final String COLUMN_GIF_URL="gifurl";
+        public static final String COLUMN_GIF_URL = "gifurl";
 
         public static Uri buildGifUriWithId(String id) {
             return CONTENT_URI.buildUpon()

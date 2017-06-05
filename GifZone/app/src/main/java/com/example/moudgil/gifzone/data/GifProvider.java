@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,13 +30,14 @@ public class GifProvider extends ContentProvider {
         UriMatcher urimatcher = new UriMatcher(UriMatcher.NO_MATCH);
         urimatcher.addURI(GifContract.CONTENT_AUTHORITY, GifContract.PATH_NAME, GIFSALL);
         urimatcher.addURI(GifContract.CONTENT_AUTHORITY, GifContract.PATH_NAME + "/#", GIFBYID);
-        urimatcher.addURI(GifContract.CONTENT_AUTHORITY, GifContract.PATH_NAME_TRENDING,TRENDINGGIFS);
+        urimatcher.addURI(GifContract.CONTENT_AUTHORITY, GifContract.PATH_NAME_TRENDING, TRENDINGGIFS);
         return urimatcher;
 
     }
+
     @Override
     public boolean onCreate() {
-        mGifDBHelper= new GifDBHelper(getContext());
+        mGifDBHelper = new GifDBHelper(getContext());
         return true;
     }
 
@@ -83,7 +83,7 @@ public class GifProvider extends ContentProvider {
 
             }
 
-            case TRENDINGGIFS:{
+            case TRENDINGGIFS: {
                 cursor = mGifDBHelper.getReadableDatabase().query(
                         GifContract.GifEntry.TRENDING_TABLE_NAME,
                         projection,
@@ -123,8 +123,8 @@ public class GifProvider extends ContentProvider {
             case GIFSALL:
 
                 long id = db.insert(GifContract.GifEntry.TABLE_NAME, null, values);
-                Log.i("dataInserted",String.valueOf(id));
-                if ( id > 0 ) {
+                Log.i("dataInserted", String.valueOf(id));
+                if (id > 0) {
                     returnUri = ContentUris.withAppendedId(GifContract.GifEntry.CONTENT_URI, id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
@@ -137,7 +137,6 @@ public class GifProvider extends ContentProvider {
 
 
         getContext().getContentResolver().notifyChange(uri, null);
-
 
 
         return returnUri;
@@ -169,7 +168,7 @@ public class GifProvider extends ContentProvider {
                 if (rowsInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
-                Log.i("rowsInserted",String.valueOf(rowsInserted));
+                Log.i("rowsInserted", String.valueOf(rowsInserted));
                 Intent dataUpdatedIntent = new Intent(Config.WIDGET_UPDATE_ACTION);
                 getContext().sendBroadcast(dataUpdatedIntent);
                 return rowsInserted;
@@ -187,15 +186,15 @@ public class GifProvider extends ContentProvider {
             case GIFBYID:
                 String gifID = uri.getPathSegments().get(1);
 
-                id = db.delete(GifContract.GifEntry.TABLE_NAME, GifContract.GifEntry.COLUMN_GIFID+"=?", new String[]{gifID});
+                id = db.delete(GifContract.GifEntry.TABLE_NAME, GifContract.GifEntry.COLUMN_GIFID + "=?", new String[]{gifID});
 
-                Log.i("DELETED",String.valueOf(id));
+                Log.i("DELETED", String.valueOf(id));
 
                 break;
 
             case TRENDINGGIFS:
                 id = db.delete(GifContract.GifEntry.TRENDING_TABLE_NAME, selection, selectionArgs);
-                Log.i("DELETED",String.valueOf(id));
+                Log.i("DELETED", String.valueOf(id));
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

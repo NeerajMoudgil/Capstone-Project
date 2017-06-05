@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         tools:text="Something went wrong !!"
-        android:textColor="@color/colorAccent"/>
+        android:textColor="@color/colorAccent"
+        android:visibility="gone"/>
 
 </FrameLayout>

@@ -43,25 +43,26 @@ import butterknife.Unbinder;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment implements HomeAdapter.homeClickListener {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.adView)
+    AdView mAdView;
     private FirebaseAnalytics firebaseAnalytics;
-
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
-
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView; @BindView(R.id.adView)
-    AdView mAdView;
     private Unbinder unbinder;
     private HomeAdapter adapter;
     private List<Home> homeList;
+    public static final String TAG_TOP="topFragment";
+    public static final String TAG_FAVORITES="favFragment";
+    public static final String TAG_CATEGORIES="categoriesFragment";
+
+    public static String CURRENT_TAG=TAG_TOP;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -75,7 +76,6 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
      * @param param2 Parameter 2.
      * @return A new instance of fragment HomeFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -99,8 +99,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v=inflater.inflate(R.layout.fragment_home, container, false);
-        unbinder= ButterKnife.bind(this,v);
+        View v = inflater.inflate(R.layout.fragment_home, container, false);
+        unbinder = ButterKnife.bind(this, v);
         firebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
         homeList = new ArrayList<>();
         adapter = new HomeAdapter(this, homeList);
@@ -137,22 +137,9 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
         unbinder.unbind();
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
-       super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+        super.onAttach(context);
     }
 
     @Override
@@ -163,29 +150,98 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
 
     @Override
     public void homeClick(Home home) {
-        String navName=home.getTitle();
+        String navName = home.getTitle();
         Intent intent;
-        switch (navName)
-        {
-            case "Top":
-                intent= new Intent(getActivity(), TopGifActivity.class);
-                intent.putExtra(Config.NAV_TYPE,Config.NAV_TRENDING);
-                Bundle bundle = new Bundle();
-                bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, 100);
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, Config.NAV_TRENDING);
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-                startActivity(intent);
+        Fragment fragment=null;
+
+            switch (navName) {
+            case "Top": {
+                if (!getResources().getBoolean(R.bool.two_pane)) {
+
+                    intent = new Intent(getActivity(), TopGifActivity.class);
+                    intent.putExtra(Config.NAV_TYPE, Config.NAV_TRENDING);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, 100);
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, Config.NAV_TRENDING);
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    startActivity(intent);
+                } else {
+                    CURRENT_TAG=TAG_TOP;
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Config.URL_TYPE, Config.TRENDING);
+                     fragment = new TopGifsFragment();
+                    fragment.setArguments(bundle);
+
+                }
                 break;
+            }
             case "Categories":
-                intent= new Intent(getActivity(), CategoryActivity.class);
-                startActivity(intent);
+                if (!getResources().getBoolean(R.bool.two_pane)) {
+
+                    intent = new Intent(getActivity(), CategoryActivity.class);
+                    startActivity(intent);
+                } else {
+                    CURRENT_TAG=TAG_CATEGORIES;
+
+                     fragment = new CategoriesFragment();
+
+
+
+                }
                 break;
             case "Favorites":
-                intent= new Intent(getActivity(), FavoritesActivity.class);
-                startActivity(intent);
+                if (!getResources().getBoolean(R.bool.two_pane)) {
+
+                    intent = new Intent(getActivity(), FavoritesActivity.class);
+                    startActivity(intent);
+                } else {
+                    CURRENT_TAG=TAG_FAVORITES;
+                     fragment = new FavoritesFragment();
+
+
+
+                }
                 break;
         }
+        //check if clicked on same home menu again
+        if (getActivity().getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
+            return;
 
+        }
+
+        if(fragment!=null) {
+
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, fragment, CURRENT_TAG)
+                    .commit();
+        }
+
+    }
+
+    /**
+     * Converting dp to pixel
+     */
+    private int dpToPx(int dp) {
+        Resources r = getResources();
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
+
+    /**
+     * Adding few albums for testing
+     */
+    private void prepareHome() {
+
+        String homeArr[] = getResources().getStringArray(R.array.homeArr);
+        int len = homeArr.length;
+
+        for (int iter = 0; iter < len; iter++) {
+            Home home = new Home(homeArr[iter], R.mipmap.ic_launcher);
+            homeList.add(home);
+
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -199,32 +255,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-    /**
-     * Converting dp to pixel
-     */
-    private int dpToPx(int dp) {
-        Resources r = getResources();
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
-    }
-    /**
-     * Adding few albums for testing
-     */
-    private void prepareHome() {
-
-        String homeArr[]= getResources().getStringArray(R.array.homeArr);
-        int len= homeArr.length;
-
-        for(int iter=0;iter<len;iter++)
-        {
-            Home home= new Home(homeArr[iter],R.mipmap.ic_launcher);
-            homeList.add(home);
-
-        }
-
-        adapter.notifyDataSetChanged();
     }
 
 }

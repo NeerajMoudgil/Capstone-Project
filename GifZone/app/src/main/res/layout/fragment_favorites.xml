@@ -23,7 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/no_fav_error"
-        android:textColor="@color/colorAccent"/>
+        android:textColor="@color/colorAccent"
+        android:visibility="gone"/>
 
 
 </FrameLayout>

@@ -43,6 +43,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,28 +54,23 @@ import butterknife.ButterKnife;
  * create an instance of this fragment.
  */
 public class TopGifsFragment extends Fragment implements FetchData.OnResponse, GifImageAdapter.ImageClickedListener {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
-    private List<GifImage> gifList;
-
     @BindView(R.id.gif_image_recycler)
     RecyclerView gifRecycelerView;
     @BindView(R.id.progress_bar)
     ProgressBar mProgressBar;
     @BindView(R.id.emptyView)
     TextView emptyView;
-
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+    private OnFragmentInteractionListener mListener;
+    private List<GifImage> gifList;
     private GifImageAdapter gifImageAdapter;
-    private boolean isTrending=false;
+    private boolean isTrending = false;
+    private Unbinder unbind;
 
     public TopGifsFragment() {
         // Required empty public constructor
@@ -101,8 +97,8 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setRetainInstance(true);
-        if(gifList!=null) {
-            if (gifList.size() ==0) {
+        if (gifList != null) {
+            if (gifList.size() == 0) {
                 super.onCreate(savedInstanceState);
                 return;
 
@@ -122,52 +118,48 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_top_gifs, container, false);
+        View view = inflater.inflate(R.layout.fragment_top_gifs, container, false);
         ButterKnife.setDebug(true);
-        ButterKnife.bind(this,view);
+        unbind = ButterKnife.bind(this, view);
 
-        gifList= new ArrayList<>();
-        gifImageAdapter=new GifImageAdapter(this);
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+        gifList = new ArrayList<>();
+        gifImageAdapter = new GifImageAdapter(this);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        }
-        else{
+        } else {
             gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
         }
 
-       // gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(),2));
         gifRecycelerView.setAdapter(gifImageAdapter);
-       // dummy_test=(ImageView) view.findViewById(R.id.dummy_test);
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(gifList.size()==0) {
+        if (gifList.size() == 0) {
             getTopGifs();
         }
     }
 
-    private void getTopGifs() {
-        FetchData fetchData= new FetchData(this);
-        String url= Config.BASE_URL;
-        HashMap<String,String> params= new HashMap<>();
-        Bundle bundle=getArguments();
-        if(bundle!=null) {
+    //calling Giphy API for getting the gifs and displaing using recyclerview
 
-            String urlType=bundle.getString(Config.URL_TYPE);
-            String queryParam=bundle.getString(Config.CATEGORY_TYPE,null);
-            if(queryParam.equals(Config.TRENDING))
-            {
-                isTrending=true;
-            }else
-            {
-                isTrending=false;
+    private void getTopGifs() {
+        FetchData fetchData = new FetchData(this);
+        String url = Config.BASE_URL;
+        HashMap<String, String> params = new HashMap<>();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+
+            String urlType = bundle.getString(Config.URL_TYPE);
+            String queryParam = bundle.getString(Config.CATEGORY_TYPE, null);
+            if (urlType.equals(Config.TRENDING)) {
+                isTrending = true;
+            } else {
+                isTrending = false;
             }
-            if(queryParam!=null)
-            {
-                params.put(Config.QUERY_PARAM,queryParam);
+            if (queryParam != null) {
+                params.put(Config.QUERY_PARAM, queryParam);
 
             }
 
@@ -175,11 +167,10 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
 
             String getUrl = fetchData.createGetURL(url, urlType, params);
             Log.d("frag", getUrl);
-            if(NetworkCalls.getInstance().isConnected()) {
+            if (NetworkCalls.getInstance().isConnected()) {
                 mProgressBar.setVisibility(View.VISIBLE);
                 fetchData.getCall(getUrl);
-            }else
-            {
+            } else {
 
                 showErrorView(getString(R.string.network_error));
 
@@ -187,22 +178,11 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
         }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+
     }
 
     @Override
@@ -212,38 +192,41 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbind.unbind();
+    }
+
+    @Override
     public void onReponse(String response, String purpose) {
 
-        if(!response.equals("error"))
-        {
+        if (!response.equals("error")) {
             try {
-                JSONObject jsonObj= new JSONObject(response);
-                JSONArray dataArr= jsonObj.getJSONArray("data");
-                int len= dataArr.length();
-                if(len>0)
-                {
-                    ContentValues content []= new ContentValues[len];
-                    for(int iter=0;iter<len;iter++) {
+                JSONObject jsonObj = new JSONObject(response);
+                JSONArray dataArr = jsonObj.getJSONArray("data");
+                int len = dataArr.length();
+                if (len > 0) {
+                    ContentValues content[] = new ContentValues[len];
+                    for (int iter = 0; iter < len; iter++) {
                         JSONObject dataobj = dataArr.getJSONObject(iter);
                         JSONObject imgObj = dataobj.getJSONObject("images");
                         String gifID = dataobj.getString("id");
                         JSONObject originalObj = imgObj.getJSONObject("fixed_width_downsampled");
                         String url = originalObj.getString("url");
-                        ContentValues contentValues= new ContentValues();
-                        contentValues.put(GifContract.GifEntry.COLUMN_GIFID,gifID);
-                        contentValues.put(GifContract.GifEntry.COLUMN_GIF_URL,url);
-                        content[iter]=contentValues;
-                        GifImage gifImage=new GifImage(url,gifID,null);
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(GifContract.GifEntry.COLUMN_GIFID, gifID);
+                        contentValues.put(GifContract.GifEntry.COLUMN_GIF_URL, url);
+                        content[iter] = contentValues;
+                        GifImage gifImage = new GifImage(url, gifID, null);
                         gifList.add(gifImage);
                         Log.d("toppp", url);
                     }
-                    if(isTrending) {
+                    if (isTrending) {
                         getActivity().getContentResolver().delete(GifContract.GifEntry.CONTENT_URI_TRENDING, null, null);
                         getActivity().getContentResolver().bulkInsert(GifContract.GifEntry.CONTENT_URI_TRENDING, content);
                     }
                     gifImageAdapter.setGifImageList(gifList);
-                    if(isAdded())
-                    {
+                    if (isAdded()) {
                         mProgressBar.setVisibility(View.GONE);
                     }
                 }
@@ -255,6 +238,7 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
 
     }
 
+    //show error
     private void showErrorView(String err) {
         if (isAdded()) {
             mProgressBar.setVisibility(View.GONE);
@@ -265,19 +249,39 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (getResources().getBoolean(R.bool.two_pane)) {
+
+            if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+            } else {
+                gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
+
+            }
+        } else {
+            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+            }
+
+        }
+    }
+
+    @Override
     public void onImageClicekd(GifImageAdapter.MyViewHolder viewHolder, GifImage gifImage) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        Transition changeTransform = TransitionInflater.from(getContext()).
-                inflateTransition(R.transition.change_image_transform);
-        Transition explodeTransform = TransitionInflater.from(getContext()).
-                inflateTransition(android.R.transition.explode);
+            Transition changeTransform = TransitionInflater.from(getContext()).
+                    inflateTransition(R.transition.change_image_transform);
+            Transition explodeTransform = TransitionInflater.from(getContext()).
+                    inflateTransition(android.R.transition.explode);
             this.setSharedElementReturnTransition(changeTransform);
             this.setExitTransition(explodeTransform);
 
-            Fragment detailFragment=  DetailFragment.newInstance("ok","ok");
-            Bundle bundle= new Bundle();
-            bundle.putString(Config.IMG_URL,gifImage.getUrl());
-            bundle.putString(Config.GIF_ID,gifImage.getId());
+            Fragment detailFragment = DetailFragment.newInstance("ok", "ok");
+            Bundle bundle = new Bundle();
+            bundle.putString(Config.IMG_URL, gifImage.getUrl());
+            bundle.putString(Config.GIF_ID, gifImage.getId());
 
             // Setup enter transition on second fragment
             detailFragment.setSharedElementEnterTransition(changeTransform);
@@ -289,7 +293,7 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
                     .replace(R.id.container, detailFragment)
                     .addToBackStack(null)
                     .commit();
-            }
+        }
     }
 
     /**

@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.moudgil.gifzone.CategoryActivity;
 import com.example.moudgil.gifzone.R;
 import com.example.moudgil.gifzone.TopGifActivity;
 import com.example.moudgil.gifzone.adapter.GifImageAdapter;
@@ -36,20 +35,14 @@ import butterknife.Unbinder;
  * create an instance of this fragment.
  */
 public class CategoriesFragment extends Fragment implements GifImageAdapter.ImageClickedListener {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private Unbinder unbinder;
-
     @BindView(R.id.categories_recycler)
     RecyclerView categoriesRecycler;
-
+    private String mParam1;
+    private String mParam2;
+    private Unbinder unbinder;
     private TopGifsFragment.OnFragmentInteractionListener mListener;
 
     private List<GifImage> gifList;
@@ -68,7 +61,6 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
      * @param param2 Parameter 2.
      * @return A new instance of fragment CategoriesFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static CategoriesFragment newInstance(String param1, String param2) {
         CategoriesFragment fragment = new CategoriesFragment();
         Bundle args = new Bundle();
@@ -91,14 +83,13 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_categories, container, false);
-        unbinder=ButterKnife.bind(this,view);
-        gifList=new ArrayList<>();
-        gifImageAdapter= new GifImageAdapter(this);
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        View view = inflater.inflate(R.layout.fragment_categories, container, false);
+        unbinder = ButterKnife.bind(this, view);
+        gifList = new ArrayList<>();
+        gifImageAdapter = new GifImageAdapter(this);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             categoriesRecycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        }else
-        {
+        } else {
             categoriesRecycler.setLayoutManager(new GridLayoutManager(getContext(), 3));
 
         }
@@ -110,11 +101,10 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String arr[]=  getResources().getStringArray(R.array.categoriesArr);
-        int len=arr.length;
-        for(int iter=0;iter<len;iter++)
-        {
-            GifImage gifImage=new GifImage("https://media1.giphy.com/media/3o6gDTrDKD4cTqOlTG/200w_d.gif","0",arr[iter]);
+        String arr[] = getResources().getStringArray(R.array.categoriesArr);
+        int len = arr.length;
+        for (int iter = 0; iter < len; iter++) {
+            GifImage gifImage = new GifImage("https://media1.giphy.com/media/3o6gDTrDKD4cTqOlTG/200w_d.gif", "0", arr[iter]);
             gifList.add(gifImage);
 
         }
@@ -128,24 +118,10 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
         unbinder.unbind();
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
     }
 
     @Override
@@ -154,13 +130,34 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
         mListener = null;
     }
 
+    /**
+     * Whwn Image is clicked taken to detail page, in case oftablet on same page using fragments
+     *
+     * @param viewHolder viewholder holding item forshared transitions
+     * @param gifImage   image clicked
+     */
     @Override
     public void onImageClicekd(GifImageAdapter.MyViewHolder viewHolder, GifImage gifImage) {
 
-        Intent intent= new Intent(getActivity(), TopGifActivity.class);
-        intent.putExtra(Config.NAV_TYPE,Config.NAV_CATEGORIES);
-        intent.putExtra(Config.CATEGORY_TYPE,gifImage.getHashTAg());
-        startActivity(intent);
+        if (!getResources().getBoolean(R.bool.two_pane)) {
+
+            Intent intent = new Intent(getActivity(), TopGifActivity.class);
+            intent.putExtra(Config.NAV_TYPE, Config.NAV_CATEGORIES);
+            intent.putExtra(Config.CATEGORY_TYPE, gifImage.getHashTAg());
+            startActivity(intent);
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putString(Config.NAV_TYPE, Config.NAV_CATEGORIES);
+            bundle.putString(Config.URL_TYPE, Config.SEARCH);
+            bundle.putString(Config.CATEGORY_TYPE, gifImage.getHashTAg());
+            TopGifsFragment topGifsFragment = new TopGifsFragment();
+            topGifsFragment.setArguments(bundle);
+
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, topGifsFragment).addToBackStack(null)
+                    .commit();
+        }
 
     }
 
@@ -175,7 +172,6 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

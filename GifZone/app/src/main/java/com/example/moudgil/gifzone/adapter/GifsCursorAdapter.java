@@ -23,26 +23,14 @@ import com.example.moudgil.gifzone.data.GifImage;
 public class GifsCursorAdapter extends RecyclerView.Adapter<GifsCursorAdapter.GifsAdapterViewHolder> {
 
 
+    private final GifsCursorOnClickHandler mClickHandler;
     private Cursor mCursor;
     private Context mContext;
-    private final GifsCursorOnClickHandler mClickHandler;
-
 
 
     public GifsCursorAdapter(GifsCursorOnClickHandler mClickHandler) {
-        this.mClickHandler=mClickHandler;
-       // mCursor=GifImage.oldCursor;
+        this.mClickHandler = mClickHandler;
     }
-
-
-
-    /**
-     * The interface that provides onclick.
-     */
-    public interface GifsCursorOnClickHandler {
-        void onClickCursor(GifsAdapterViewHolder gifsAdapterViewHolder,GifImage gifImage);
-    }
-
 
     @Override
     public GifsAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -53,7 +41,6 @@ public class GifsCursorAdapter extends RecyclerView.Adapter<GifsCursorAdapter.Gi
 
         return new GifsAdapterViewHolder(view);
     }
-
 
     @Override
     public void onBindViewHolder(final GifsAdapterViewHolder holder, int position) {
@@ -68,10 +55,9 @@ public class GifsCursorAdapter extends RecyclerView.Adapter<GifsCursorAdapter.Gi
         String gifID = mCursor.getString(gifIDindex);
         final String gifURL = mCursor.getString(urlIndex);
         Glide.with(mContext).load(Uri.parse(gifURL)).asGif().into(holder.gifImage);
-;
+        ;
 
     }
-
 
     /**
      * Returns the number of items to display.
@@ -84,16 +70,11 @@ public class GifsCursorAdapter extends RecyclerView.Adapter<GifsCursorAdapter.Gi
         return mCursor.getCount();
     }
 
-
     /**
      * When data changes and a re-query occurs, this function swaps the old Cursor
      * with a newly updated Cursor (Cursor c) that is passed in.
      */
     public void swapCursor(Cursor c) {
-//        if (mCursor == c) {
-//            Log.i("sameCursor","sameCursor");
-//            return;
-//        }
 
         mCursor = c;
 
@@ -105,6 +86,13 @@ public class GifsCursorAdapter extends RecyclerView.Adapter<GifsCursorAdapter.Gi
     }
 
 
+    /**
+     * The interface that provides onclick.
+     */
+    public interface GifsCursorOnClickHandler {
+        void onClickCursor(GifsAdapterViewHolder gifsAdapterViewHolder, GifImage gifImage);
+    }
+
     public class GifsAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
 
@@ -112,15 +100,14 @@ public class GifsCursorAdapter extends RecyclerView.Adapter<GifsCursorAdapter.Gi
 
         public GifsAdapterViewHolder(View itemView) {
             super(itemView);
-            gifImage=(ImageView)itemView.findViewById(R.id.gif_image);
+            gifImage = (ImageView) itemView.findViewById(R.id.gif_image);
             itemView.setOnClickListener(this);
 
         }
 
-
         @Override
         public void onClick(View view) {
-            int adapterPosition=getAdapterPosition();
+            int adapterPosition = getAdapterPosition();
             mCursor.moveToPosition(adapterPosition);
             int gifIDindex = mCursor.getColumnIndex(GifContract.GifEntry.COLUMN_GIFID);
             final int urlIndex = mCursor.getColumnIndex(GifContract.GifEntry.COLUMN_GIF_URL);
@@ -128,8 +115,8 @@ public class GifsCursorAdapter extends RecyclerView.Adapter<GifsCursorAdapter.Gi
             String gifID = mCursor.getString(gifIDindex);
             final String gifURL = mCursor.getString(urlIndex);
 
-           GifImage gifImage=new GifImage(gifURL,gifID,null);
-            mClickHandler.onClickCursor(this,gifImage);
+            GifImage gifImage = new GifImage(gifURL, gifID, null);
+            mClickHandler.onClickCursor(this, gifImage);
         }
     }
 }

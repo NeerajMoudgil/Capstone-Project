@@ -41,27 +41,22 @@ import butterknife.Unbinder;
  * Use the {@link FavoritesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FavoritesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,GifsCursorAdapter.GifsCursorOnClickHandler {
-    // TODO: Rename parameter arguments, choose names that match
+public class FavoritesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, GifsCursorAdapter.GifsCursorOnClickHandler {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final int LOADER_ID = 102;
-
+    @BindView(R.id.favorites_recycler)
+    RecyclerView favoriteRecyceler;
+    @BindView(R.id.progress_bar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.emptyView)
+    TextView emptyView;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
     private LoaderManager loaderManager;
-
-    @BindView(R.id.favorites_recycler)
-    RecyclerView favoriteRecyceler;
- @BindView(R.id.progress_bar)
- ProgressBar mProgressBar;
-@BindView(R.id.emptyView)
-TextView emptyView;
-
     private GifsCursorAdapter gifCursorAdapter;
 
     private Unbinder unbinder;
@@ -78,7 +73,6 @@ TextView emptyView;
      * @param param2 Parameter 2.
      * @return A new instance of fragment FavoritesFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static FavoritesFragment newInstance(String param1, String param2) {
         FavoritesFragment fragment = new FavoritesFragment();
         Bundle args = new Bundle();
@@ -101,11 +95,17 @@ TextView emptyView;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_favorites, container, false);
-        unbinder= ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.fragment_favorites, container, false);
+        unbinder = ButterKnife.bind(this, view);
         favoriteRecyceler.setHasFixedSize(true);
-        gifCursorAdapter= new GifsCursorAdapter(this);
-        favoriteRecyceler.setLayoutManager(new GridLayoutManager(getContext(),2));
+        gifCursorAdapter = new GifsCursorAdapter(this);
+        if(!getResources().getBoolean(R.bool.two_pane)) {
+            favoriteRecyceler.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        }else
+        {
+            favoriteRecyceler.setLayoutManager(new GridLayoutManager(getContext(), 4));
+
+        }
         favoriteRecyceler.setAdapter(gifCursorAdapter);
 
         getActivity().getSupportLoaderManager().initLoader(LOADER_ID, null, this);
@@ -123,22 +123,11 @@ TextView emptyView;
         unbinder.unbind();
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
     }
 
     @Override
@@ -146,6 +135,8 @@ TextView emptyView;
         super.onDetach();
         mListener = null;
     }
+
+
 
     /**
      * getting data from local DB for favourite gifs using contentProvider
@@ -160,7 +151,6 @@ TextView emptyView;
 
                 if (mGifData == null || DetailFragment.favoriteChanged) {
                     mProgressBar.setVisibility(View.VISIBLE);
-                    Log.i("forceO", "forceLOad");
                     forceLoad();
                     ;
                 } else {
@@ -213,7 +203,7 @@ TextView emptyView;
             showErrorView(msg);
         }
         mProgressBar.setVisibility(View.INVISIBLE);
-      //  Movie.oldCursor = data;
+        //  Movie.oldCursor = data;
 
 
     }
@@ -233,7 +223,7 @@ TextView emptyView;
     }
 
     @Override
-    public void onClickCursor(GifsCursorAdapter.GifsAdapterViewHolder viewHolder,GifImage gifImage) {
+    public void onClickCursor(GifsCursorAdapter.GifsAdapterViewHolder viewHolder, GifImage gifImage) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Transition changeTransform = TransitionInflater.from(getContext()).
                     inflateTransition(R.transition.change_image_transform);
@@ -242,10 +232,10 @@ TextView emptyView;
             this.setSharedElementReturnTransition(changeTransform);
             this.setExitTransition(explodeTransform);
 
-            Fragment detailFragment=  DetailFragment.newInstance("ok","ok");
-            Bundle bundle= new Bundle();
-            bundle.putString(Config.IMG_URL,gifImage.getUrl());
-            bundle.putString(Config.GIF_ID,gifImage.getId());
+            Fragment detailFragment = DetailFragment.newInstance("ok", "ok");
+            Bundle bundle = new Bundle();
+            bundle.putString(Config.IMG_URL, gifImage.getUrl());
+            bundle.putString(Config.GIF_ID, gifImage.getId());
 
             // Setup enter transition on second fragment
             detailFragment.setSharedElementEnterTransition(changeTransform);

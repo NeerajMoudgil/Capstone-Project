@@ -42,8 +42,6 @@ public class GifDBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_STATEMENT_TRTENDING);
 
 
-
-
     }
 
     @Override

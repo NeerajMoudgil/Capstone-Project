@@ -38,4 +38,16 @@
     <string name="other_error">Something went wrong. Please try again after sometime!</string>
     <string name="no_fav_error">No favorites to show!</string>
 
+    <!--content descriptions-->
+    <string name="content_favorite">Add to favorite</string>
+    <string name="content_whatsapp_share">Share with Whatsapp</string>
+    <string name="content_fb_share">Share with FB</string>
+    <string name="content_gallery_save">Save to Gallery</string>
+    <string name="content_share">Share</string>
+
+
+    <string name="allow_access">You need to allow access to Gallery</string>
+    <string name="access_denied">Gallery access denied</string>
+    <string name="wait_msg">Please wait ..</string>
+
 </resources>

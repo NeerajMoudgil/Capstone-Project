@@ -1,25 +1,15 @@
 package com.example.moudgil.gifzone;
 
-import android.content.Intent;
-import android.content.res.Resources;
+import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 
-import com.example.moudgil.gifzone.adapter.HomeAdapter;
 import com.example.moudgil.gifzone.app.Config;
-import com.example.moudgil.gifzone.data.Home;
-import com.example.moudgil.gifzone.ui.GridSpacingItemDecoration;
+import com.example.moudgil.gifzone.fragments.HomeFragment;
+import com.example.moudgil.gifzone.fragments.TopGifsFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,12 +23,20 @@ public class MainActivity extends AppCompatActivity {
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(!getResources().getBoolean(R.bool.two_pane)) {
+        initCollapsingToolbar();
 
-            initCollapsingToolbar();
-        }else
-        {
-            toolbar.setTitle(getString(R.string.app_name));
+        //checking for tablet and showing two panes
+
+        if (getResources().getBoolean(R.bool.two_pane)) {
+            Bundle bundle = new Bundle();
+            bundle.putString(Config.URL_TYPE, Config.TRENDING);
+            TopGifsFragment topGifsFragment = new TopGifsFragment();
+            topGifsFragment.setArguments(bundle);
+            HomeFragment.CURRENT_TAG=HomeFragment.TAG_TOP;
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.container, topGifsFragment, HomeFragment.CURRENT_TAG)
+                    .commit();
         }
     }
 

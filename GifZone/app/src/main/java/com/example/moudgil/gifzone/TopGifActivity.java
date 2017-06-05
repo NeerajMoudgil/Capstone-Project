@@ -15,27 +15,24 @@ public class TopGifActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top_gif);
         if (savedInstanceState == null) {
-            Log.d("savedInstance State","null");
-            Bundle bundle=new Bundle();
-            Intent intent= getIntent();
+            Log.d("savedInstance State", "null");
+            Bundle bundle = new Bundle();
+            Intent intent = getIntent();
 
-            if(intent.hasExtra(Config.NAV_TYPE))
-            {
-                String navType=intent.getStringExtra(Config.NAV_TYPE);
-                if(navType.equals(Config.NAV_TRENDING))
-                {
-                    bundle.putString(Config.URL_TYPE,Config.TRENDING);
+            if (intent.hasExtra(Config.NAV_TYPE)) {
+                String navType = intent.getStringExtra(Config.NAV_TYPE);
+                if (navType.equals(Config.NAV_TRENDING)) {
+                    bundle.putString(Config.URL_TYPE, Config.TRENDING);
 
-                }else if(navType.equals(Config.NAV_CATEGORIES))
-                {
-                    bundle.putString(Config.URL_TYPE,Config.SEARCH);
-                    String categoryType=intent.getStringExtra(Config.CATEGORY_TYPE);
-                    bundle.putString(Config.CATEGORY_TYPE,categoryType);
+                } else if (navType.equals(Config.NAV_CATEGORIES)) {
+                    bundle.putString(Config.URL_TYPE, Config.SEARCH);
+                    String categoryType = intent.getStringExtra(Config.CATEGORY_TYPE);
+                    bundle.putString(Config.CATEGORY_TYPE, categoryType);
 
                 }
             }
 
-            TopGifsFragment topGifsFragment=new TopGifsFragment();
+            TopGifsFragment topGifsFragment = new TopGifsFragment();
             topGifsFragment.setArguments(bundle);
 
             getSupportFragmentManager()

@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutionException;
  * Created by apple on 30/05/17.
  */
 
-public class GifWidgetRemoteViewService extends RemoteViewsService{
+public class GifWidgetRemoteViewService extends RemoteViewsService {
 
 
     @Override
@@ -66,7 +66,7 @@ public class GifWidgetRemoteViewService extends RemoteViewsService{
 
             @Override
             public void onDestroy() {
-                if(data != null){
+                if (data != null) {
                     data.close();
                     data = null;
                 }
@@ -92,8 +92,6 @@ public class GifWidgetRemoteViewService extends RemoteViewsService{
                 final String gifURL = data.getString(urlIndex);
 
 
-
-
                 BitmapRequestBuilder builder =
                         Glide.with(getApplicationContext())
                                 .load(Uri.parse(gifURL))
@@ -108,8 +106,8 @@ public class GifWidgetRemoteViewService extends RemoteViewsService{
 
 
                 final Intent fillInIntent = new Intent();
-             //   fillInIntent.putExtra("symbol",data.getString(Contract.Quote.POSITION_SYMBOL));
-                fillInIntent.putExtra(Config.NAV_TYPE,Config.NAV_TRENDING);
+                //   fillInIntent.putExtra("symbol",data.getString(Contract.Quote.POSITION_SYMBOL));
+                fillInIntent.putExtra(Config.NAV_TYPE, Config.NAV_TRENDING);
                 views.setOnClickFillInIntent(R.id.widget_list_item, fillInIntent);
                 return views;
             }

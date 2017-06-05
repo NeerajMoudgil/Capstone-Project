@@ -1,6 +1,5 @@
 package com.example.moudgil.gifzone.widget;
 
-import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.appwidget.AppWidgetManager;
@@ -8,7 +7,6 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -29,7 +27,7 @@ public class GifWidgetProvider extends AppWidgetProvider {
         // Perform this loop procedure for each App Widget that belongs to this provider
         for (int appWidgetID : appWidgetIds) {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_detail);
-            Log.d("widget","called");
+            Log.d("widget", "called");
             //Create an Intent to launch MainActivity
             Intent intent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
@@ -37,10 +35,10 @@ public class GifWidgetProvider extends AppWidgetProvider {
 
             // Set up the collection
 
-                setRemoteAdapter(context, views);
+            setRemoteAdapter(context, views);
 
             Intent clickIntentTemplate = new Intent(context, TopGifActivity.class);
-            clickIntentTemplate.putExtra(Config.NAV_TYPE,Config.NAV_TRENDING);
+            clickIntentTemplate.putExtra(Config.NAV_TYPE, Config.NAV_TRENDING);
 
             PendingIntent clickPendingIntentTemplate = TaskStackBuilder.create(context)
                     .addNextIntentWithParentStack(clickIntentTemplate)
