@@ -96,18 +96,8 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
-        if (gifList != null) {
-            if (gifList.size() == 0) {
-                super.onCreate(savedInstanceState);
-                return;
-
-            } else {
-                super.onCreate(null);
-                return;
-            }
-        }
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -307,7 +297,6 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

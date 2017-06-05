@@ -34,6 +34,7 @@ import com.example.moudgil.gifzone.data.GifContract;
 import com.example.moudgil.gifzone.utils.FileUtils;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -88,6 +89,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
     private String gifURL;
     private ProgressDialog mProgressDialog;
     private Unbinder unbinder;
+    private FirebaseAnalytics firebaseAnalytics;
 
     public DetailFragment() {
         // Required empty public constructor
@@ -115,6 +117,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -128,6 +131,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
 
         View v = inflater.inflate(R.layout.fragment_detail, container, false);
         unbinder = ButterKnife.bind(this, v);
+        firebaseAnalytics=FirebaseAnalytics.getInstance(getContext());
         mProgressDialog = new ProgressDialog(getContext());
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setMessage(getString(R.string.wait_msg));
@@ -336,16 +340,15 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private void shareWhatsapp(String path) {
+    private void shareFB(String path) {
 
 
         Uri imageUri = Uri.parse(path);
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        //Target whatsapp:
+        //Target FB:
         shareIntent.setPackage("com.facebook.katana");
         //Add text and then Image URI
-        //shareIntent.putExtra(Intent.EXTRA_TEXT, picture_text);
         shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
         shareIntent.setType("image/gif");
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -353,11 +356,11 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
         try {
             startActivity(shareIntent);
         } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(getContext(), "Facebook not installed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.fb_error), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void shareFB(String path) {
+    private void shareWhatsapp(String path) {
 
         Uri imageUri = Uri.parse(path);
         Intent shareIntent = new Intent();
@@ -370,8 +373,13 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
 
         try {
             startActivity(shareIntent);
+            Bundle bundle = new Bundle();
+            bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, 101);
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, Config.NAV_TRENDING);
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Whatsapp Share");
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
         } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(getContext(), "Whatsapp not installed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.whatsapp_error), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -383,6 +391,9 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
         values.put(MediaStore.MediaColumns.DATA, path);
 
         getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        Toast.makeText(getContext(), getString(R.string.success_gallery), Toast.LENGTH_SHORT).show();
+
+
     }
 
     @Override

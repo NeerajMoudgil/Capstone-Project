@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
@@ -14,26 +14,27 @@
         android:layout_margin="@dimen/card_margin"
         android:elevation="3dp"
         card_view:cardCornerRadius="@dimen/card_album_radius">
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        <ImageView
-            android:id="@+id/gif_image"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:scaleType="fitXY"
-            />
+
+            <ImageView
+                android:id="@+id/gif_image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/home_icon_height"
+                android:scaleType="fitXY" />
+
             <TextView
                 android:id="@+id/hashTag_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:gravity="center"
                 android:background="@color/trans"
-                tools:text="#okkkkkk"
+                android:gravity="center"
                 android:textColor="@android:color/white"
                 android:visibility="gone"
-                />
+                tools:text="#okkkkkk" />
 
         </FrameLayout>
     </android.support.v7.widget.CardView>

@@ -37,6 +37,8 @@
     <string name="network_error">Please check your network connection!</string>
     <string name="other_error">Something went wrong. Please try again after sometime!</string>
     <string name="no_fav_error">No favorites to show!</string>
+    <string name="whatsapp_error">Whatsapp not installed!</string>
+    <string name="fb_error">Facebook not installed!</string>
 
     <!--content descriptions-->
     <string name="content_favorite">Add to favorite</string>
@@ -44,10 +46,18 @@
     <string name="content_fb_share">Share with FB</string>
     <string name="content_gallery_save">Save to Gallery</string>
     <string name="content_share">Share</string>
+    <string name="detail_img">Detail Image</string>
+    <string name="content_widget_img">Widget Image</string>
 
 
     <string name="allow_access">You need to allow access to Gallery</string>
     <string name="access_denied">Gallery access denied</string>
     <string name="wait_msg">Please wait ..</string>
+
+    <!--sucess-->
+    <string name="success_gallery">Successfully saved to Gallery!!</string>
+
+    <!--search-->
+    <string name="search_hint">Search gifs</string>
 
 </resources>

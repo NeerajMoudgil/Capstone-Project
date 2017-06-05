@@ -88,6 +88,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -163,6 +164,7 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
                     Bundle bundle = new Bundle();
                     bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, 100);
                     bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, Config.NAV_TRENDING);
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "HOME Navigation");
                     firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                     startActivity(intent);
                 } else {
@@ -204,9 +206,18 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
                 break;
         }
         //check if clicked on same home menu again
+
+        if (!getResources().getBoolean(R.bool.two_pane)) {
+        return;
+        }
+
         if (getActivity().getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             return;
 
+        }
+
+        for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {
+            getActivity().getSupportFragmentManager().popBackStack();
         }
 
         if(fragment!=null) {

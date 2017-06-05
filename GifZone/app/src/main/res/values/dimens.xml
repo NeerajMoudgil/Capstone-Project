@@ -2,16 +2,15 @@
 <resources>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="item_offset">10dp</dimen>
     <dimen name="detail_backdrop_height">250dp</dimen>
-    <dimen name="backdrop_title">30dp</dimen>
+    <dimen name="backdrop_title">30sp</dimen>
     <dimen name="card_margin">5dp</dimen>
     <dimen name="card_album_radius">0dp</dimen>
     <dimen name="home_cover_height">160dp</dimen>
     <dimen name="home_title_padding">10dp</dimen>
     <dimen name="home_title">15sp</dimen>
     <dimen name="detail_img_margin">16dp</dimen>
+    <dimen name="home_icon_height">100dp</dimen>
 
     <dimen name="widget_gif_default_width">250dp</dimen>
     <dimen name="widget_gif_default_height">160dp</dimen>
@@ -20,5 +19,9 @@
     <dimen name="widget_grid_horizontal">80dp</dimen>
 
     <dimen name="detail_img_height">200dp</dimen>
+    <dimen name="share_container_margin">50dp</dimen>
+
+    <dimen name="widget_padding">16dp</dimen>
+    <dimen name="widget_img_height">80dp</dimen>
 
 </resources>

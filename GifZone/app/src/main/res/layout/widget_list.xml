@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_list_item"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:id="@+id/widget_list_item"
-    >
-
+    android:paddingEnd="@dimen/widget_padding"
+    android:paddingLeft="@dimen/widget_padding"
+    android:paddingRight="@dimen/widget_padding"
+    android:paddingStart="@dimen/widget_padding">
 
 
     <ImageView
         android:id="@+id/gif_image"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="@dimen/widget_img_height"
         android:gravity="start|center_vertical"
-        tools:text="GOOG"
-        android:textColor="@color/colorAccent"
+        android:contentDescription="@string/content_widget_img"
         />
 </LinearLayout>
