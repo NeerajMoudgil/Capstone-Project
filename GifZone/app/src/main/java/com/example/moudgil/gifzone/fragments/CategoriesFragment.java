@@ -103,9 +103,10 @@ public class CategoriesFragment extends Fragment implements GifImageAdapter.Imag
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         String arr[] = getResources().getStringArray(R.array.categoriesArr);
+        String arrUrls[] = getResources().getStringArray(R.array.categoriesArrURLS);
         int len = arr.length;
         for (int iter = 0; iter < len; iter++) {
-            GifImage gifImage = new GifImage("https://media1.giphy.com/media/3o6gDTrDKD4cTqOlTG/200w_d.gif", "0", arr[iter]);
+            GifImage gifImage = new GifImage(arrUrls[iter], "0", arr[iter]);
             gifList.add(gifImage);
 
         }

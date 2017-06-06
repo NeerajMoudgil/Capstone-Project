@@ -30,6 +30,21 @@
 
     </string-array>
 
+    <!--Categories URLS-->
+    <string-array name="categoriesArrURLS">
+        <item>https://media4.giphy.com/media/26BRED0APH6fRa1sk/200w_d.gif</item>
+        <item>https://media3.giphy.com/media/S3Ot3hZ5bcy8o/200w_d.gif</item>
+        <item>https://media2.giphy.com/media/RddAJiGxTPQFa/200w_d.gif</item>
+        <item>https://media3.giphy.com/media/xTiTniMqpYz1KJ5Wik/200w_d.gif</item>
+        <item>https://media3.giphy.com/media/l41YnUj6ofOCl6DsY/200w_d.gif</item>
+        <item>https://media1.giphy.com/media/ZqlvCTNHpqrio/200w_d.gif</item>
+        <item>https://media1.giphy.com/media/UQaRUOLveyjNC/200w_d.gif</item>
+        <item>https://media0.giphy.com/media/p8Uw3hzdAE2dO/200w_d.gif</item>
+        <item> https://media4.giphy.com/media/l0NwSvw3kQWZuUW8E/200w_d.gif</item>
+        <item>https://media1.giphy.com/media/NWg7M1VlT101W/200w_d.gif</item>
+
+    </string-array>
+
     <string name="widget_nodata">No data to show</string>
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
 

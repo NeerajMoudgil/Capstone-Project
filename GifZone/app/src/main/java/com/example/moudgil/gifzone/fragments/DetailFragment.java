@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -153,6 +154,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
             ActivityCompat.postponeEnterTransition(getActivity());
             gifURL = bundle.getString(Config.IMG_URL);
             gifID = getArguments().getString(Config.GIF_ID);
+            new checkGifFavorite().execute(gifID);
             Glide.with(getContext()).load(Uri.parse(gifURL)).asGif().dontAnimate()
                     .listener(new RequestListener<Uri, GifDrawable>() {
                         @Override
@@ -243,12 +245,31 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
     private void insertIntoDB() {
         favoriteChanged = true;
         if (gifURL != null) {
-            ContentValues contentValues = new ContentValues();
 
-            contentValues.put(GifContract.GifEntry.COLUMN_GIFID, gifID);
-            contentValues.put(GifContract.GifEntry.COLUMN_GIF_URL, gifURL);
+            int currentImage = (Integer) favoriteImg.getTag(R.id.favoriteGifID);
+            if(currentImage==R.mipmap.ic_launcher_round)
+            {
 
-            Uri uri = getContext().getContentResolver().insert(GifContract.GifEntry.CONTENT_URI, contentValues);
+
+                Uri deleturi = GifContract.GifEntry.buildGifUriWithId(gifID);
+                getActivity().getContentResolver().delete(deleturi, null, null);
+                favoriteImg.setImageResource(R.mipmap.ic_launcher);
+                favoriteImg.setTag(R.id.favoriteGifID, R.mipmap.ic_launcher);
+
+
+            }else if(currentImage==R.mipmap.ic_launcher)
+            {
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put(GifContract.GifEntry.COLUMN_GIFID, gifID);
+                contentValues.put(GifContract.GifEntry.COLUMN_GIF_URL, gifURL);
+
+                Uri uri = getContext().getContentResolver().insert(GifContract.GifEntry.CONTENT_URI, contentValues);
+                favoriteImg.setImageResource(R.mipmap.ic_launcher_round);
+                favoriteImg.setTag(R.id.favoriteGifID, R.mipmap.ic_launcher_round);
+
+            }
+
         }
 
     }
@@ -508,6 +529,35 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
             mProgressDialog.dismiss();
             shareOrSave(s);
 
+        }
+    }
+
+    /**
+     *Check weather Gif is added as favorite/not and set image on the basis of same
+     */
+    public class checkGifFavorite extends AsyncTask<String, Void, Cursor> {
+
+        @Override
+        protected Cursor doInBackground(String... params) {
+            String gifID = params[0];
+            Uri movieUri = GifContract.GifEntry.buildGifUriWithId(gifID);
+            return getActivity().getContentResolver().query(movieUri, null, GifContract.GifEntry.COLUMN_GIFID, null, null);
+        }
+
+        @Override
+        protected void onPostExecute(Cursor cursor) {
+            int cursorCount = cursor.getCount();
+            setFavriteImage(cursorCount);
+        }
+    }
+
+    private void setFavriteImage(int cursorCount) {
+        if (cursorCount > 0) {
+            favoriteImg.setImageResource(R.mipmap.ic_launcher_round);
+            favoriteImg.setTag(R.id.favoriteGifID, R.mipmap.ic_launcher_round);
+        } else {
+            favoriteImg.setImageResource(R.mipmap.ic_launcher);
+            favoriteImg.setTag(R.id.favoriteGifID, R.mipmap.ic_launcher);
         }
     }
 

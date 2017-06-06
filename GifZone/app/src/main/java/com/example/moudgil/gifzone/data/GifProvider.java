@@ -29,7 +29,7 @@ public class GifProvider extends ContentProvider {
     private static UriMatcher buildUriMatcher() {
         UriMatcher urimatcher = new UriMatcher(UriMatcher.NO_MATCH);
         urimatcher.addURI(GifContract.CONTENT_AUTHORITY, GifContract.PATH_NAME, GIFSALL);
-        urimatcher.addURI(GifContract.CONTENT_AUTHORITY, GifContract.PATH_NAME + "/#", GIFBYID);
+        urimatcher.addURI(GifContract.CONTENT_AUTHORITY, GifContract.PATH_NAME + "/*", GIFBYID);
         urimatcher.addURI(GifContract.CONTENT_AUTHORITY, GifContract.PATH_NAME_TRENDING, TRENDINGGIFS);
         return urimatcher;
 
