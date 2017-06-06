@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,9 +44,14 @@ import butterknife.Unbinder;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment implements HomeAdapter.homeClickListener {
+    public static final String TAG_TOP = "topFragment";
+    public static final String TAG_FAVORITES = "favFragment";
+    public static final String TAG_CATEGORIES = "categoriesFragment";
+    public static final String TAG_DETAIL = "categoriesFragment";
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public static String CURRENT_TAG = TAG_TOP;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.adView)
@@ -58,11 +64,6 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
     private Unbinder unbinder;
     private HomeAdapter adapter;
     private List<Home> homeList;
-    public static final String TAG_TOP="topFragment";
-    public static final String TAG_FAVORITES="favFragment";
-    public static final String TAG_CATEGORIES="categoriesFragment";
-
-    public static String CURRENT_TAG=TAG_TOP;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -153,9 +154,16 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
     public void homeClick(Home home) {
         String navName = home.getTitle();
         Intent intent;
-        Fragment fragment=null;
+        Fragment fragment = null;
+        //only required in large screens
+        if (getResources().getBoolean(R.bool.two_pane)) {
+            if (CURRENT_TAG.equals(TAG_DETAIL)) {
+                removeOldFragments();
 
-            switch (navName) {
+            }
+        }
+
+        switch (navName) {
             case "Top": {
                 if (!getResources().getBoolean(R.bool.two_pane)) {
 
@@ -168,10 +176,10 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
                     firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
                     startActivity(intent);
                 } else {
-                    CURRENT_TAG=TAG_TOP;
+                    CURRENT_TAG = TAG_TOP;
                     Bundle bundle = new Bundle();
                     bundle.putString(Config.URL_TYPE, Config.TRENDING);
-                     fragment = new TopGifsFragment();
+                    fragment = new TopGifsFragment();
                     fragment.setArguments(bundle);
 
                 }
@@ -183,10 +191,9 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
                     intent = new Intent(getActivity(), CategoryActivity.class);
                     startActivity(intent);
                 } else {
-                    CURRENT_TAG=TAG_CATEGORIES;
+                    CURRENT_TAG = TAG_CATEGORIES;
 
-                     fragment = new CategoriesFragment();
-
+                    fragment = new CategoriesFragment();
 
 
                 }
@@ -197,9 +204,8 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
                     intent = new Intent(getActivity(), FavoritesActivity.class);
                     startActivity(intent);
                 } else {
-                    CURRENT_TAG=TAG_FAVORITES;
-                     fragment = new FavoritesFragment();
-
+                    CURRENT_TAG = TAG_FAVORITES;
+                    fragment = new FavoritesFragment();
 
 
                 }
@@ -208,26 +214,39 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
         //check if clicked on same home menu again
 
         if (!getResources().getBoolean(R.bool.two_pane)) {
-        return;
+            return;
         }
 
         if (getActivity().getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
+            Log.d("CURRENT_TAG return", "in return");
+
             return;
 
+        } else {
+            removeOldFragments();
         }
 
-        for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); ++i) {
-            getActivity().getSupportFragmentManager().popBackStack();
-        }
 
-        if(fragment!=null) {
+        if (fragment != null) {
 
             getActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, fragment, CURRENT_TAG)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
 
+    }
+
+    /**
+     * Remove old fragments from container for smoth navigation
+     */
+
+    private void removeOldFragments() {
+        Fragment currentFragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.container);
+        if (currentFragment != null) {
+            getActivity().getSupportFragmentManager().beginTransaction().remove(currentFragment).commitNow();
+            getActivity().getSupportFragmentManager().popBackStackImmediate();
+        }
     }
 
     /**

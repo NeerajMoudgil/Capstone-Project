@@ -211,18 +211,26 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
                         gifList.add(gifImage);
                         Log.d("toppp", url);
                     }
+                    if (isAdded()) {
                     if (isTrending) {
                         getActivity().getContentResolver().delete(GifContract.GifEntry.CONTENT_URI_TRENDING, null, null);
                         getActivity().getContentResolver().bulkInsert(GifContract.GifEntry.CONTENT_URI_TRENDING, content);
                     }
                     gifImageAdapter.setGifImageList(gifList);
-                    if (isAdded()) {
+
                         mProgressBar.setVisibility(View.GONE);
                     }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
                 showErrorView(getString(R.string.other_error));
+            }
+        }else
+        {
+            if(isAdded())
+            {
+                showErrorView(getString(R.string.other_error));
+
             }
         }
 
@@ -277,12 +285,13 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
             detailFragment.setSharedElementEnterTransition(changeTransform);
             detailFragment.setEnterTransition(explodeTransform);
             detailFragment.setArguments(bundle);
+            HomeFragment.CURRENT_TAG=HomeFragment.TAG_DETAIL;
             getActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .addSharedElement(viewHolder.gifImage, "gif_transition")
-                    .replace(R.id.container, detailFragment)
+                    .replace(R.id.container, detailFragment,HomeFragment.CURRENT_TAG)
                     .addToBackStack(null)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
     }
 
