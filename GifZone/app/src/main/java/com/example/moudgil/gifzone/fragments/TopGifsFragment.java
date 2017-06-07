@@ -63,7 +63,6 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
     ProgressBar mProgressBar;
     @BindView(R.id.emptyView)
     TextView emptyView;
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private OnFragmentInteractionListener mListener;
@@ -111,6 +110,7 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
         View view = inflater.inflate(R.layout.fragment_top_gifs, container, false);
         ButterKnife.setDebug(true);
         unbind = ButterKnife.bind(this, view);
+        isTrending=false;
 
         gifList = new ArrayList<>();
         gifImageAdapter = new GifImageAdapter(this);

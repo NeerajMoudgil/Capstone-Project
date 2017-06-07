@@ -32,7 +32,7 @@
                 android:layout_margin="@dimen/detail_img_margin"
                 android:layout_weight="1"
                 android:contentDescription="@string/content_favorite"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/unlike"
                 android:transitionName="gif_transition" />
 
             <ImageView
@@ -42,7 +42,7 @@
                 android:layout_margin="@dimen/detail_img_margin"
                 android:layout_weight="1"
                 android:contentDescription="@string/content_fb_share"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/facebook"
                 android:transitionName="gif_transition" />
 
             <ImageView
@@ -52,7 +52,7 @@
                 android:layout_margin="@dimen/detail_img_margin"
                 android:layout_weight="1"
                 android:contentDescription="@string/content_whatsapp_share"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/whatsapp"
                 android:transitionName="gif_transition"
 
                 />
@@ -64,7 +64,7 @@
                 android:layout_margin="@dimen/detail_img_margin"
                 android:layout_weight="1"
                 android:contentDescription="@string/content_share"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/share"
                 android:transitionName="gif_transition"
 
                 />
@@ -76,7 +76,7 @@
                 android:layout_margin="@dimen/detail_img_margin"
                 android:layout_weight="1"
                 android:contentDescription="@string/content_gallery_save"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/gallery"
                 android:transitionName="gif_transition"
 
                 />

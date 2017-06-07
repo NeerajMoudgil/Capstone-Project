@@ -82,7 +82,7 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
     @BindView(R.id.adView)
     AdView mAdView;
     private String shareType;
-    // TODO: Rename and change types of parameters
+
     private String mParam1;
     private String mParam2;
     private OnFragmentInteractionListener mListener;
@@ -247,17 +247,17 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
         if (gifURL != null) {
 
             int currentImage = (Integer) favoriteImg.getTag(R.id.favoriteGifID);
-            if(currentImage==R.mipmap.ic_launcher_round)
+            if(currentImage==R.drawable.like)
             {
 
 
                 Uri deleturi = GifContract.GifEntry.buildGifUriWithId(gifID);
                 getActivity().getContentResolver().delete(deleturi, null, null);
-                favoriteImg.setImageResource(R.mipmap.ic_launcher);
-                favoriteImg.setTag(R.id.favoriteGifID, R.mipmap.ic_launcher);
+                favoriteImg.setImageResource(R.drawable.unlike);
+                favoriteImg.setTag(R.id.favoriteGifID, R.drawable.unlike);
 
 
-            }else if(currentImage==R.mipmap.ic_launcher)
+            }else if(currentImage==R.drawable.unlike)
             {
                 ContentValues contentValues = new ContentValues();
 
@@ -265,8 +265,8 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                 contentValues.put(GifContract.GifEntry.COLUMN_GIF_URL, gifURL);
 
                 Uri uri = getContext().getContentResolver().insert(GifContract.GifEntry.CONTENT_URI, contentValues);
-                favoriteImg.setImageResource(R.mipmap.ic_launcher_round);
-                favoriteImg.setTag(R.id.favoriteGifID, R.mipmap.ic_launcher_round);
+                favoriteImg.setImageResource(R.drawable.like);
+                favoriteImg.setTag(R.id.favoriteGifID, R.drawable.like);
 
             }
 
@@ -553,11 +553,11 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
 
     private void setFavriteImage(int cursorCount) {
         if (cursorCount > 0) {
-            favoriteImg.setImageResource(R.mipmap.ic_launcher_round);
-            favoriteImg.setTag(R.id.favoriteGifID, R.mipmap.ic_launcher_round);
+            favoriteImg.setImageResource(R.drawable.like);
+            favoriteImg.setTag(R.id.favoriteGifID, R.drawable.like);
         } else {
-            favoriteImg.setImageResource(R.mipmap.ic_launcher);
-            favoriteImg.setTag(R.id.favoriteGifID, R.mipmap.ic_launcher);
+            favoriteImg.setImageResource(R.drawable.unlike);
+            favoriteImg.setTag(R.id.favoriteGifID, R.drawable.unlike);
         }
     }
 

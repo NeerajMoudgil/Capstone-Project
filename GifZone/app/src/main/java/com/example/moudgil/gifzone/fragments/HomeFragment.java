@@ -263,13 +263,16 @@ public class HomeFragment extends Fragment implements HomeAdapter.homeClickListe
     private void prepareHome() {
 
         String homeArr[] = getResources().getStringArray(R.array.homeArr);
-        int len = homeArr.length;
 
-        for (int iter = 0; iter < len; iter++) {
-            Home home = new Home(homeArr[iter], R.mipmap.ic_launcher);
-            homeList.add(home);
 
-        }
+            Home top = new Home(homeArr[0], R.drawable.top_home);
+            Home categories = new Home(homeArr[1], R.drawable.categories_home);
+            Home favorites = new Home(homeArr[2], R.drawable.favorites_home);
+            homeList.add(top);
+            homeList.add(categories);
+            homeList.add(favorites);
+
+
 
         adapter.notifyDataSetChanged();
     }

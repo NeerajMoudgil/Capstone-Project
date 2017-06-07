@@ -25,7 +25,7 @@
             android:paddingRight="@dimen/home_title_padding"
             android:paddingStart="@dimen/home_title_padding"
             android:paddingEnd="@dimen/home_title_padding"
-            android:textColor="@color/album_title"
+            android:textColor="@color/home_title"
             android:textSize="@dimen/home_title" />
 
 
