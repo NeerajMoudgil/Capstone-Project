@@ -86,6 +86,11 @@
             android:layout_weight="2"
             tools:layout="@layout/fragment_home" />
 
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="@color/divider"/>
+
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="0dp"
