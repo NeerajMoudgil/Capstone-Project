@@ -11,14 +11,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    signingConfigs {
-        release {
-            storeFile file("keystore.jks")
-            storePassword "udacity1"
-            keyAlias "key"
-            keyPassword "udacity2"
-        }
-    }
+
     buildTypes {
         release {
             minifyEnabled false

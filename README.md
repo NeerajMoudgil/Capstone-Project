@@ -11,4 +11,4 @@ Gif Zone allows to
   - see top gifs
   - Search for gifs
   - download and share gifs over various social apps
-  
+
