@@ -57,6 +57,7 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG=TopGifsFragment.class.getSimpleName();
     @BindView(R.id.gif_image_recycler)
     RecyclerView gifRecycelerView;
     @BindView(R.id.progress_bar)
@@ -70,6 +71,12 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
     private GifImageAdapter gifImageAdapter;
     private boolean isTrending = false;
     private Unbinder unbind;
+    private GridLayoutManager gridLayoutManager;
+    private int threshold=4;
+    private boolean loading;
+    private int lastVisibleItem, totalItemCount;
+    private int offset=0;
+
 
     public TopGifsFragment() {
         // Required empty public constructor
@@ -109,19 +116,114 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_top_gifs, container, false);
         ButterKnife.setDebug(true);
+
         unbind = ButterKnife.bind(this, view);
         isTrending=false;
 
         gifList = new ArrayList<>();
         gifImageAdapter = new GifImageAdapter(this);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+            gridLayoutManager=new GridLayoutManager(getContext(), 2);
+            gifRecycelerView.setLayoutManager(gridLayoutManager);
         } else {
-            gifRecycelerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
+            gridLayoutManager=new GridLayoutManager(getContext(), 3);
+
+            gifRecycelerView.setLayoutManager(gridLayoutManager);
         }
+
+        gifRecycelerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                totalItemCount = gridLayoutManager.getItemCount();
+                lastVisibleItem = gridLayoutManager.findLastVisibleItemPosition();
+                if(!loading && totalItemCount <= (lastVisibleItem + threshold)){
+                    loading=true;
+                    offset+=25;
+                    loadMoreGifs();
+
+                }
+            }
+        });
 
         gifRecycelerView.setAdapter(gifImageAdapter);
         return view;
+    }
+
+    private void loadMoreGifs() {
+        FetchData fetchData = new FetchData(new FetchData.OnResponse() {
+            @Override
+            public void onReponse(String response, String purpose) {
+                if (!response.equals("error")) {
+                    try {
+                        JSONObject jsonObj = new JSONObject(response);
+                        JSONArray dataArr = jsonObj.getJSONArray("data");
+                        int len = dataArr.length();
+                        int oldsize=gifList.size();
+                        if (len > 0) {
+                            loading=false;
+                            oldsize--;
+                            for (int iter = 0; iter < len; iter++) {
+                                oldsize++;
+                                JSONObject dataobj = dataArr.getJSONObject(iter);
+                                JSONObject imgObj = dataobj.getJSONObject("images");
+                                String gifID = dataobj.getString("id");
+                                JSONObject originalObj = imgObj.getJSONObject("fixed_width_downsampled");
+                                String url = originalObj.getString("url");
+                                GifImage gifImage = new GifImage(url, gifID, null);
+                                gifList.add(oldsize,gifImage);
+                                Log.d("toppp more", url);
+                            }
+                            if (isAdded()) {
+
+                                gifImageAdapter.setloadMoreGifImageList(gifList);
+
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        showErrorView(getString(R.string.other_error));
+                    }
+                }else
+                {
+                    if(isAdded())
+                    {
+                        showErrorView(getString(R.string.other_error));
+
+                    }
+                }
+            }
+        });
+        String url = Config.BASE_URL;
+        HashMap<String, String> params = new HashMap<>();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+
+            String urlType = bundle.getString(Config.URL_TYPE);
+            String queryParam = bundle.getString(Config.CATEGORY_TYPE, null);
+            if (urlType.equals(Config.TRENDING)) {
+                isTrending = true;
+            } else {
+                isTrending = false;
+            }
+            if (queryParam != null) {
+                params.put(Config.QUERY_PARAM, queryParam);
+
+            }
+
+            params.put(Config.API_KEY, Config.API_KEY_VALUE);
+            params.put(Config.OFFSET, String.valueOf(offset));
+
+            String getUrl = fetchData.createGetURL(url, urlType, params);
+            Log.d("frag", getUrl);
+            if (NetworkCalls.getInstance().isConnected()) {
+                fetchData.getCall(getUrl);
+            } else {
+
+                showErrorView(getString(R.string.network_error));
+
+            }
+        }
     }
 
     @Override
@@ -203,16 +305,18 @@ public class TopGifsFragment extends Fragment implements FetchData.OnResponse, G
                         String gifID = dataobj.getString("id");
                         JSONObject originalObj = imgObj.getJSONObject("fixed_width_downsampled");
                         String url = originalObj.getString("url");
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put(GifContract.GifEntry.COLUMN_GIFID, gifID);
-                        contentValues.put(GifContract.GifEntry.COLUMN_GIF_URL, url);
-                        content[iter] = contentValues;
+
+                            ContentValues contentValues = new ContentValues();
+                            contentValues.put(GifContract.GifEntry.COLUMN_GIFID, gifID);
+                            contentValues.put(GifContract.GifEntry.COLUMN_GIF_URL, url);
+                            content[iter] = contentValues;
+
                         GifImage gifImage = new GifImage(url, gifID, null);
                         gifList.add(gifImage);
                         Log.d("toppp", url);
                     }
                     if (isAdded()) {
-                    if (isTrending) {
+                    if (isTrending ) {
                         getActivity().getContentResolver().delete(GifContract.GifEntry.CONTENT_URI_TRENDING, null, null);
                         getActivity().getContentResolver().bulkInsert(GifContract.GifEntry.CONTENT_URI_TRENDING, content);
                     }

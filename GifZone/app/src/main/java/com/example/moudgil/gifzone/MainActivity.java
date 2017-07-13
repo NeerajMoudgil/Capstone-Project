@@ -5,16 +5,22 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.moudgil.gifzone.app.Config;
 import com.example.moudgil.gifzone.fragments.HomeFragment;
 import com.example.moudgil.gifzone.fragments.TopGifsFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAnalytics firebaseAnalytics;
-
+@BindView(R.id.backdrop)
+    ImageView background_img;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
         initCollapsingToolbar();
 
@@ -50,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         collapsingToolbar.setTitle(" ");
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         appBarLayout.setExpanded(true);
+        Glide.with(this).load(R.drawable.home).asGif().into(background_img);
+
 
         // hiding & showing the title when toolbar expanded & collapsed
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {

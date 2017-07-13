@@ -53,8 +53,17 @@
                         android:textColor="@android:color/white"
                         android:textSize="@dimen/backdrop_title" />
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/attribution"
+                        android:textColor="@android:color/white"
+                       android:layout_gravity="end|bottom"
+                        />
+
 
                 </LinearLayout>
+
             </RelativeLayout>
 
             <android.support.v7.widget.Toolbar

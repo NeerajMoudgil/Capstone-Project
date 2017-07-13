@@ -70,6 +70,17 @@ public class GifImageAdapter extends RecyclerView.Adapter<GifImageAdapter.MyView
         this.gifImageList = gifImageList;
         notifyDataSetChanged();
     }
+    public void setloadMoreGifImageList(List<GifImage> gifImageList) {
+        int oldSize=this.gifImageList.size();
+        int newSize=gifImageList.size();
+        this.gifImageList = gifImageList;
+     //   notifyDataSetChanged();
+        //notifyItemRangeChanged(oldSize,newSize);
+       notifyItemRangeInserted(oldSize,newSize);
+       // notifyItemRangeChanged(0, this.getItemCount());
+
+    }
+
 
     //Interface callback for handling click events
     public interface ImageClickedListener {

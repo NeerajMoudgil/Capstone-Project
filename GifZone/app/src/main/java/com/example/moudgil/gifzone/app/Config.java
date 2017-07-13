@@ -13,6 +13,7 @@ public class Config {
 
     public static final String QUERY_PARAM="q";
     public static final String API_KEY="api_key";
+    public static final String OFFSET="offset";
     //API key is publically available
     public static final String API_KEY_VALUE="dc6zaTOxFJmzC";
     public static final String FOLDER_NAME="GifZone";
