@@ -35,6 +35,7 @@ import com.example.moudgil.gifzone.data.GifContract;
 import com.example.moudgil.gifzone.utils.FileUtils;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.File;
@@ -91,6 +92,8 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
     private ProgressDialog mProgressDialog;
     private Unbinder unbinder;
     private FirebaseAnalytics firebaseAnalytics;
+    private InterstitialAd mInterstitialAd;
+
 
     public DetailFragment() {
         // Required empty public constructor
@@ -136,6 +139,10 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
         mProgressDialog = new ProgressDialog(getContext());
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setMessage(getString(R.string.wait_msg));
+        mInterstitialAd = new InterstitialAd(getContext());
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
 
         return v;
     }
@@ -527,6 +534,11 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             mProgressDialog.dismiss();
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            } else {
+                Log.d("TAG", "The interstitial wasn't loaded yet.");
+            }
             shareOrSave(s);
 
         }
